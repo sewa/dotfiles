@@ -31,6 +31,6 @@
                      ) t))
 
   
-  (evil-leader/set-key-for-mode 'ruby-mode "kl" 'rspec-compile-on-line)
-  (evil-leader/set-key-for-mode 'ruby-mode "kf" 'rspec-compile-file)
+  (evil-leader/set-key-for-mode 'enh-ruby-mode "kk" 'rspec-compile-on-line)
+  (evil-leader/set-key-for-mode 'enh-ruby-mode "kf" 'rspec-compile-file)
   )
