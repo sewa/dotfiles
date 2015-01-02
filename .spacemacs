@@ -10,7 +10,7 @@
  ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
  dotspacemacs-configuration-layer-path '()
  ;; List of configuration layers to load.
- dotspacemacs-configuration-layers '(html javascript themes-megapack osx ansi-color ruby rvm rspec)
+ dotspacemacs-configuration-layers '(html javascript themes-megapack osx ruby rvm rspec)
  ;; A list of packages and/or extensions that will not be install and loaded.
  dotspacemacs-excluded-packages '()
 )
