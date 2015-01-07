@@ -35,10 +35,7 @@
  ;; the commands bound to the current keystrokes.
  dotspacemacs-guide-key-delay 0.4
  ;; If non nil the frame is fullscreen when Emacs starts up (Emacs 24.4+ only).
- dotspacemacs-fullscreen-at-startup nil
- ;; If non nil the frame is maximized when Emacs starts up (Emacs 24.4+ only).
- ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
- dotspacemacs-maximized-at-startup nil
+ dotspacemacs-fullscreen-at-startup t
  ;; If non nil unicode symbols are displayed in the mode line (e.g. for lighters)
  dotspacemacs-mode-line-unicode-symbols t
  ;; If non nil smooth scrolling (native-scrolling) is enabled. Smooth scrolling
@@ -49,7 +46,7 @@
  ;; evil leader.
  dotspacemacs-feature-toggle-leader-on-jk nil
  ;; If non-nil smartparens-strict-mode will be enabled in programming modes.
- dotspacemacs-smartparens-strict-mode nil
+ dotspacemacs-smartparens-strict-mode t
  ;; If non nil advises quit functions to keep server open when quitting.
  dotspacemacs-persistent-server nil
  ;; The default package repository used if no explicit repository has been
@@ -69,6 +66,7 @@
    (evil-leader/set-key-for-mode 'web-mode "k" 'web-mode-snippet-insert)
    (global-set-key (kbd "C-j") 'open-line)
 
+   (setq scss-compile-at-save nil)
    (setq web-mode-markup-indent-offset 2) 
    (setq web-mode-css-indent-offset 2) 
    (setq web-mode-code-indent-offset 2)
