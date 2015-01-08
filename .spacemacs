@@ -10,7 +10,7 @@
  ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
  dotspacemacs-configuration-layer-path '()
  ;; List of configuration layers to load.
- dotspacemacs-configuration-layers '(html javascript themes-megapack git osx ruby erlang-elixir rvm rspec osx-ext)
+ dotspacemacs-configuration-layers '(html javascript themes-megapack git osx ruby erlang-elixir rvm rspec osx-ext bundler)
  ;; A list of packages and/or extensions that will not be install and loaded.
  dotspacemacs-excluded-packages '()
 )
@@ -63,7 +63,11 @@
 (defun dotspacemacs/init ()
  "User initialization for Spacemacs. This function is called at the very
  startup."
-   (evil-leader/set-key-for-mode 'web-mode "k" 'web-mode-snippet-insert)
+   (evil-leader/set-key-for-mode 'web-mode "kk" 'web-mode-snippet-insert)
+
+   (evil-leader/set-key-for-mode 'enh-ruby-mode "kb" 'bundle-open)
+   (evil-leader/set-key-for-mode 'web-mode "kb" 'bundle-open)
+
    (global-set-key (kbd "C-j") 'open-line)
 
    (setq scss-compile-at-save nil)
