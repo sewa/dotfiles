@@ -10,7 +10,7 @@
  ;; Paths must have a trailing slash (ie. `~/.mycontribs/')
  dotspacemacs-configuration-layer-path '()
  ;; List of configuration layers to load.
- dotspacemacs-configuration-layers '(html javascript themes-megapack git osx ruby erlang-elixir rvm rspec osx-ext bundler)
+ dotspacemacs-configuration-layers '(html javascript themes-megapack git osx ruby erlang-elixir haskell rspec osx-ext dash)
  ;; A list of packages and/or extensions that will not be install and loaded.
  dotspacemacs-excluded-packages '()
 )
@@ -20,7 +20,7 @@
 
 (setq-default
  ;; Default theme applied at startup
- dotspacemacs-default-theme 'solarized-dark
+ dotspacemacs-themes '(solarized-dark)
  ;; The leader key
  dotspacemacs-leader-key "SPC"
  ;; Major mode leader key is a shortcut key which is the equivalent of
@@ -63,23 +63,22 @@
 (defun dotspacemacs/init ()
  "User initialization for Spacemacs. This function is called at the very
  startup."
-   (evil-leader/set-key-for-mode 'web-mode "kk" 'web-mode-snippet-insert)
+ (global-set-key (kbd "C-j") 'open-line)
 
-   (evil-leader/set-key-for-mode 'enh-ruby-mode "kb" 'bundle-open)
-   (evil-leader/set-key-for-mode 'web-mode "kb" 'bundle-open)
+ (setq-default ruby-version-manager 'rvm)
 
-   (global-set-key (kbd "C-j") 'open-line)
+ (setq-default ruby-on-rails-support t)
 
-   (setq scss-compile-at-save nil)
-   (setq web-mode-markup-indent-offset 2) 
-   (setq web-mode-css-indent-offset 2) 
-   (setq web-mode-code-indent-offset 2)
-   (setq web-mode-extra-snippets
-         '(("erb" . (("e" . "<%= | %>")
-                     ("t"  . "<%= t(|) %>")
-                     ("c"  . "<%# | %>")
-                     ))
-     ))
+ (setq scss-compile-at-save nil)
+ (setq web-mode-markup-indent-offset 2) 
+ (setq web-mode-css-indent-offset 2) 
+ (setq web-mode-code-indent-offset 2)
+ (setq web-mode-extra-snippets
+       '(("erb" . (("e" . "<%= | %>")
+                   ("t"  . "<%= t(|) %>")
+                   ("c"  . "<%# | %>")
+                   ))
+         ))
 )
 
 ;; Custom variables
