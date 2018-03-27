@@ -11,10 +11,6 @@ export ZSH=$HOME/.oh-my-zsh
 # export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-export PATH="$PATH:$HOME/.rvm/bin" 
-
 export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/sbin:$PATH
 
@@ -26,17 +22,15 @@ export PATH=$PATH:/usr/local/lib/node_modules/npm
 export GOPATH=$HOME
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:/usr/local/Cellar/go/1.2/libexec/bin
+export PATH="$PATH:/.rvm/bin:$HOME" 
 
 # alias
-alias b="bundle exec"
-
 alias nginx_start='sudo launchctl load -w /Library/LaunchAgents/homebrew.mxcl.nginx.plist'
 alias nginx_stop='sudo launchctl unload -w /Library/LaunchAgents/homebrew.mxcl.nginx.plist'
 alias nginx_restart='nginx_stop; nginx_start;'
 
-alias fpm_start='launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist'
-alias fpm_stop='launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist'
-alias fpm_restart='fpm_stop; fpm_start;'
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
-alias railss='bin/rails s --debug'
-
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+export PGDATA=$HOME/Postgres
