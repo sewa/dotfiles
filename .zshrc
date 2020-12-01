@@ -23,7 +23,6 @@ export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:/usr/local/Cellar/go/1.2/libexec/bin
 export PATH="$PATH:/.rvm/bin:$HOME"
 
-# alias
 alias b="bundle exec"
 
 alias nginx_start='sudo launchctl load -w /Library/LaunchAgents/homebrew.mxcl.nginx.plist'
@@ -31,8 +30,8 @@ alias nginx_stop='sudo launchctl unload -w /Library/LaunchAgents/homebrew.mxcl.n
 alias nginx_restart='nginx_stop; nginx_start;'
 
 # Postgres
-export PGDATA=$HOME/Postgres
-export PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
+export PGDATA=$HOME/Postgres@11
+export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 
 # Mongodb
 export PATH="/usr/local/opt/mongodb-community@3.4/bin:$PATH"
@@ -51,4 +50,24 @@ export PATH="/usr/local/opt/node@10/bin:$PATH"
 # NVM node
 export NVM_DIR="$HOME/.nvm"
 source $(brew --prefix nvm)/nvm.sh
-nvm use system
+
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local node_version="$(nvm version)"
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$node_version" ]; then
+      nvm use
+    fi
+  elif [ "$node_version" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
