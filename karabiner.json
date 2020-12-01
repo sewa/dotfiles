@@ -16,7 +16,7 @@
                 },
                 "rules": [
                     {
-                        "description": "mute to ctrl-command-n",
+                        "description": "display_brightness_decrement to ctrl-command-n",
                         "manipulators": [
                             {
                                 "from": {
@@ -38,7 +38,7 @@
                         ]
                     },
                     {
-                        "description": "mute to ctrl-command-m",
+                        "description": "display_brightness_increment to ctrl-command-m",
                         "manipulators": [
                             {
                                 "from": {
