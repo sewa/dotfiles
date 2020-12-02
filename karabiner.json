@@ -16,6 +16,50 @@
                 },
                 "rules": [
                   {
+                    "description": "page_up to ctrl-shift-k",
+                    "manipulators": [
+                      {
+                        "from": {
+                          "key_code": "k",
+                          "modifiers": {
+                            "mandatory": [
+                              "control",
+                              "shift"
+                            ]
+                          }
+                        },
+                        "to": [
+                          {
+                            "key_code": "page_up"
+                          }
+                        ],
+                        "type": "basic"
+                      }
+                    ]
+                  },
+                  {
+                    "description": "page_down to ctrl-shift-j",
+                    "manipulators": [
+                      {
+                        "from": {
+                          "key_code": "j",
+                          "modifiers": {
+                            "mandatory": [
+                              "control",
+                              "shift"
+                            ]
+                          }
+                        },
+                        "to": [
+                          {
+                            "key_code": "page_down"
+                          }
+                        ],
+                        "type": "basic"
+                      }
+                    ]
+                  },
+                  {
                     "description": "up_arrow to ctrl-k",
                     "manipulators": [
                       {
