@@ -15,6 +15,48 @@
                     "mouse_motion_to_scroll.speed": 100
                 },
                 "rules": [
+                  {
+                    "description": "up_arrow to ctrl-k",
+                    "manipulators": [
+                      {
+                        "from": {
+                          "key_code": "k",
+                          "modifiers": {
+                            "mandatory": [
+                              "control"
+                            ]
+                          }
+                        },
+                        "to": [
+                          {
+                            "key_code": "up_arrow"
+                          }
+                        ],
+                        "type": "basic"
+                      }
+                    ]
+                  },
+                  {
+                    "description": "down_arrow to ctrl-j",
+                    "manipulators": [
+                      {
+                        "from": {
+                          "key_code": "j",
+                          "modifiers": {
+                            "mandatory": [
+                              "control"
+                            ]
+                          }
+                        },
+                        "to": [
+                          {
+                            "key_code": "down_arrow"
+                          }
+                        ],
+                        "type": "basic"
+                      }
+                    ]
+                  },
                     {
                         "description": "display_brightness_decrement to ctrl-command-n",
                         "manipulators": [

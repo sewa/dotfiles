@@ -34,7 +34,6 @@ This function should only modify configuration layer settings."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(nginx
-     lsp
      sql
      helm
      csv
@@ -103,7 +102,26 @@ values."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
-   ;; If non nil ELPA repositories are contacted via HTTPS whenever it's
+   ;; If non-nil then enable support for the portable dumper. You'll need
+   ;; to compile Emacs 27 from source following the instructions in file
+   ;; EXPERIMENTAL.org at to root of the git repository.
+   ;; (default nil)
+   dotspacemacs-enable-emacs-pdumper nil
+
+   ;; Name of executable file pointing to emacs 27+. This executable must be
+   ;; in your PATH.
+   ;; (default "emacs")
+   dotspacemacs-emacs-pdumper-executable-file "emacs"
+
+   ;; Name of the Spacemacs dump file. This is the file will be created by the
+   ;; portable dumper in the cache directory under dumps sub-directory.
+   ;; To load it when starting Emacs add the parameter `--dump-file'
+   ;; when invoking Emacs 27.1 executable on the command line, for instance:
+   ;;   ./emacs --dump-file=$HOME/.emacs.d/.cache/dumps/spacemacs-27.1.pdmp
+   ;; (default (format "spacemacs-%s.pdmp" emacs-version))
+   dotspacemacs-emacs-dumper-dump-file (format "spacemacs-%s.pdmp" emacs-version)
+
+   ;; If non-nil ELPA repositories are contacted via HTTPS whenever it's
    ;; possible. Set it to nil if you have no way to use HTTPS in your
    ;; environment, otherwise it is strongly recommended to let it set to t.
    ;; This variable has no effect if Emacs is launched with the parameter
@@ -112,6 +130,7 @@ values."
    dotspacemacs-elpa-https t
 
    ;; Maximum allowed time in seconds to contact an ELPA repository.
+   ;; (default 5)
    dotspacemacs-elpa-timeout 5
 
    ;; Set `gc-cons-threshold' and `gc-cons-percentage' when startup finishes.
@@ -119,6 +138,13 @@ values."
    ;; performance issues due to garbage collection operations.
    ;; (default '(100000000 0.1))
    dotspacemacs-gc-cons '(100000000 0.1)
+
+   ;; Set `read-process-output-max' when startup finishes.
+   ;; This defines how much data is read from a foreign process.
+   ;; Setting this >= 1 MB should increase performance for lsp servers
+   ;; in emacs 27.
+   ;; (default (* 1024 1024))
+   dotspacemacs-read-process-output-max (* 1024 1024)
 
    ;; If non-nil then Spacelpa repository is the primary source to install
    ;; a locked version of packages. If nil then Spacemacs will install the
@@ -129,7 +155,7 @@ values."
    ;; (default t)
    dotspacemacs-verify-spacelpa-archives t
 
-   ;; If non nil then spacemacs will check for updates at startup
+   ;; If non-nil then spacemacs will check for updates at startup
    ;; when the current branch is not `develop'. Note that checking for
    ;; new versions works via git commands, thus it calls GitHub services
    ;; whenever you start Emacs. (default nil)
@@ -147,6 +173,11 @@ values."
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
    dotspacemacs-editing-style 'vim
+
+   ;; If non-nil show the version string in the Spacemacs buffer. It will
+   ;; appear as (spacemacs version)@(emacs version)
+   ;; (default t)
+   dotspacemacs-startup-buffer-show-version t
 
    ;; Specify the startup banner. Default value is `official', it displays
    ;; the official spacemacs logo. An integer value is the index of text
@@ -176,12 +207,20 @@ values."
    ;; Default major mode of the scratch buffer (default `text-mode')
    dotspacemacs-scratch-mode 'text-mode
 
+   ;; If non-nil, *scratch* buffer will be persistent. Things you write down in
+   ;; *scratch* buffer will be saved and restored automatically.
+   dotspacemacs-scratch-buffer-persistent nil
+
+   ;; If non-nil, `kill-buffer' on *scratch* buffer
+   ;; will bury it instead of killing.
+   dotspacemacs-scratch-buffer-unkillable nil
+
    ;; Initial message in the scratch buffer, such as "Welcome to Spacemacs!"
    ;; (default nil)
    dotspacemacs-initial-scratch-message nil
 
    ;; List of themes, the first of the list is loaded when spacemacs starts.
-   ;; Press <SPC> T n to cycle to the next theme in the list (works great
+   ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(solarized-dark
                          solarized-light)
@@ -205,10 +244,10 @@ values."
                                :weight normal
                                :width normal)
 
-   ;; The leader key
+   ;; The leader key (default "SPC")
    dotspacemacs-leader-key "SPC"
 
-   ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
+   ;; The key used for Emacs commands `M-x' (after pressing on the leader key).
    ;; (default "SPC")
    dotspacemacs-emacs-command-key "SPC"
 
@@ -224,8 +263,10 @@ values."
    dotspacemacs-major-mode-leader-key ","
 
    ;; Major mode leader key accessible in `emacs state' and `insert state'.
-   ;; (default "C-M-m")
-   dotspacemacs-major-mode-emacs-leader-key "C-M-m"
+   ;; (default "C-M-m" for terminal mode, "<M-return>" for GUI mode).
+   ;; Thus M-RET should work as leader key in both GUI and terminal modes.
+   ;; C-M-m also should work in terminal mode, but not in GUI mode.
+   dotspacemacs-major-mode-emacs-leader-key (if window-system "<M-return>" "C-M-m")
 
    ;; These variables control whether separate commands are bound in the GUI to
    ;; the key pairs `C-i', `TAB' and `C-m', `RET'.
@@ -303,6 +344,11 @@ values."
    ;; Takes effect only if `dotspacemacs-fullscreen-at-startup' is nil.
    ;; (default nil) (Emacs 24.4+ only)
    dotspacemacs-maximized-at-startup nil
+
+   ;; If non-nil the frame is undecorated when Emacs starts up. Combine this
+   ;; variable with `dotspacemacs-maximized-at-startup' in OSX to obtain
+   ;; borderless fullscreen. (default nil)
+   dotspacemacs-undecorated-at-startup nil
 
    ;; A value from the range (0..100), in increasing opacity, which describes
    ;; the transparency level of a frame when it's active or selected.
@@ -412,6 +458,20 @@ values."
    ;; (default nil)
    dotspacemacs-whitespace-cleanup nil
 
+   ;; If non nil activate `clean-aindent-mode' which tries to correct
+   ;; virtual indentation of simple modes. This can interfer with mode specific
+   ;; indent handling like has been reported for `go-mode'.
+   ;; If it does deactivate it here.
+   ;; (default t)
+   dotspacemacs-use-clean-aindent-mode t
+
+   ;; If non-nil shift your number row to match the entered keyboard layout
+   ;; (only in insert state). Currently supported keyboard layouts are:
+   ;; `qwerty-us', `qwertz-de' and `querty-ca-fr'.
+   ;; New layouts can be added in `spacemacs-editing' layer.
+   ;; (default nil)
+   dotspacemacs-swap-number-row nil
+
    ;; Either nil or a number of seconds. If non-nil zone out after the specified
    ;; number of seconds. (default nil)
    dotspacemacs-zone-out-when-idle nil
@@ -419,7 +479,11 @@ values."
    ;; Run `spacemacs/prettify-org-buffer' when
    ;; visiting README.org files of Spacemacs.
    ;; (default nil)
-   dotspacemacs-pretty-docs nil))
+   dotspacemacs-pretty-docs nil
+
+   ;; If nil the home buffer shows the full path of agenda items
+   ;; and todos. If non nil only the file name is shown.
+   dotspacemacs-home-shorten-agenda-source nil))
 
 (defun dotspacemacs/user-env ()
   "Environment variables setup.
@@ -450,10 +514,6 @@ This function is called at the very end of Spacemacs startup, after layer
 configuration.
 Put your configuration code here, except for variables that should be set
 before packages are loaded."
-  ;; (use-package lsp-mode
-  ;;   :hook (ruby-mode . lsp)
-  ;;   :commands lsp)
-
   (setq-default
    indent-tabs-mode nil
    standard-indent 2
@@ -469,9 +529,6 @@ before packages are loaded."
    web-mode-css-indent-offset 2
    web-mode-code-indent-offset 2
    web-mode-attr-indent-offset 2)
-
-  ;; (setq ruby-deep-indent-paren nil)
-  ;; (setq ruby-use-smie nil)
 
   (setq
    haml-indent-offset 2
