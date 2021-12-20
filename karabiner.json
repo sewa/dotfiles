@@ -23,7 +23,7 @@
                           "key_code": "k",
                           "modifiers": {
                             "mandatory": [
-                              "control",
+                              "alt",
                               "shift"
                             ]
                           }
