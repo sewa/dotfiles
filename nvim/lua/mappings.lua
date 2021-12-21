@@ -7,9 +7,12 @@ local options = { noremap = true, silent = true }
 
 -- Editor
 map('n', '<leader>qq', ':qa<CR>', {})
+map('n', '<leader>eq', ':qa!<CR>', {})
+map('n', '<leader>ec', ':FzfLua colorschemes<cr>', options)
+
+-- Tree
 map('n', '<leader>pt', '<cmd>NvimTreeToggle<cr>', options)
 map('n', '<leader>pf', '<cmd>NvimTreeFindFile<cr>', options)
-map('n', '<leader>pc', ':FzfLua colorschemes<cr>', options)
 
 -- Comments
 map('n', '<leader>cl', ':CommentToggle<cr>', options)
@@ -18,6 +21,8 @@ map('v', '<leader>cl', ':CommentToggle<cr>', options)
 -- Files
 map('n', '<leader>fs', ':w<CR>', {})
 map('n', '<leader>ff', ":FzfLua files<cr>", options)
+map('n', '<leader>fl', ":FzfLua loclist<cr>", options)
+map('n', '<leader>fo', ":FzfLua oldfiles<cr>", options)
 
 -- History
 map('n', '<leader>hc', ':FzfLua command_history<cr>', options)
@@ -35,8 +40,10 @@ map('n', '<leader>bb', ':FzfLua buffers<cr>', options)
 map('n', '<leader>bd', ':bd<CR>', {})
 
 -- Search
-map('n', '<leader>/', ':FzfLua live_grep<cr>', options)
-map('n', '<leader>fb', ':FzfLua blines<cr>', options)
+map('n', '<leader>/', ':FzfLua live_grep_native<cr>', options)
+map('n', '<leader>sb', ':FzfLua blines<cr>', options)
+map('n', '<leader>sw', ':FzfLua grep_cword<cr>', options)
+map('n', '<leader>sl', ':FzfLua grep_last<cr>', options)
 
 -- Trouble
 map("n", "<leader>xx", "<cmd>Trouble<cr>", options)
