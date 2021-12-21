@@ -4,7 +4,6 @@ require('packer').startup(function()
     use 'ayu-theme/ayu-vim'
     use "folke/trouble.nvim"
     use "folke/which-key.nvim"
-    -- use 's1n7ax/nvim-terminal'
     use 'vijaymarupudi/nvim-fzf'
     use 'ibhagwan/fzf-lua'
     use 'kyazdani42/nvim-tree.lua'
@@ -24,6 +23,7 @@ require('packer').startup(function()
     use 'L3MON4D3/LuaSnip'
     use "rafamadriz/friendly-snippets"
     use 'vim-test/vim-test'
+    use "akinsho/toggleterm.nvim"
 end)
 
 vim.cmd[[set termguicolors]]
@@ -46,7 +46,7 @@ require'fzf-lua'.setup {
 
 require('nvim-tree').setup({
     view = {
-        width = 30
+        width = 35
     }
 })
 
@@ -67,4 +67,7 @@ require'nvim_comment'.setup{
     create_mappings= false
 }
 
--- require('nvim-terminal').setup{}
+require("toggleterm").setup{
+    size = vim.o.columns * 0.4,
+    direction = 'vertical'
+}
