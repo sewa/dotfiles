@@ -23,7 +23,6 @@ require('packer').startup(function()
     use 'L3MON4D3/LuaSnip'
     use "rafamadriz/friendly-snippets"
     use 'vim-test/vim-test'
-    use "akinsho/toggleterm.nvim"
 end)
 
 vim.cmd[[set termguicolors]]
@@ -65,9 +64,4 @@ require'trouble'.setup{
 require'nvim_comment'.setup{
     comment_empty = false,
     create_mappings= false
-}
-
-require("toggleterm").setup{
-    size = vim.o.columns * 0.4,
-    direction = 'vertical'
 }

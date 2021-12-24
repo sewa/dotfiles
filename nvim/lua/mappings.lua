@@ -38,7 +38,7 @@ map('n', '<leader>im', ':FzfLua man_pages<cr>', options)
 
 -- Buffers
 map('n', '<leader>bb', ':FzfLua buffers<cr>', options)
-map('n', '<leader>bd', ':bd<CR>', {})
+map('n', '<leader>bd', ':bp<bar>sp<bar>bn<bar>bd<cr>', {})
 
 -- Search
 map('n', '<leader>/', ':FzfLua live_grep_native<cr>', options)
@@ -55,26 +55,17 @@ map("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", options)
 map("n", "<leader>xr", "<cmd>Trouble lsp_references<cr>", options)
 
 -- Test
-map("n", "<leader>mtt", ":TestNearest<cr>", options)
-map("n", "<leader>mtb", ":TestFile<cr>", options)
-map("n", "<leader>mta", ":TestSuite<cr>", options)
-map("n", "<leader>mtl", ":TestLast<cr>", options)
-map("n", "<leader>mtv", ":TestVisit<cr>", options)
+map("n", "<leader>tt", ":TestNearest<cr>", options)
+map("n", "<leader>tb", ":TestFile<cr>", options)
+map("n", "<leader>ta", ":TestSuite<cr>", options)
+map("n", "<leader>tl", ":TestLast<cr>", options)
+map("n", "<leader>tv", ":TestVisit<cr>", options)
 
 -- Git
 map('n', '<leader>gs', ':FzfLua git_status<cr>', options)
 map('n', '<leader>gl', ':FzfLua git_commits<cr>', options)
 map('n', '<leader>gc', ':FzfLua git_bcommits<cr>', options)
 map('n', '<leader>gb', ':FzfLua git_branches<cr>', options)
-
--- Terminal
-map('n', '<leader>t', ':ToggleTerm<cr>', options)
-map('t', '<leader>t', '<cmd>close<cr>', options)
-map('t', '<esc>', [[<C-\><C-n>]], options)
-map('t', '<space>wh', [[<C-\><C-n><C-W>h]], options)
-map('t', '<space>wj', [[<C-\><C-n><C-W>j]], options)
-map('t', '<space>wk', [[<C-\><C-n><C-W>k]], options)
-map('t', '<space>wl', [[<C-\><C-n><C-W>l]], options)
 
 -- Windows
 map('n', '<leader>w/', '<C-W>v', options)
