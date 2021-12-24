@@ -15,6 +15,7 @@ require('packer').startup(function()
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
     use 'nvim-treesitter/nvim-treesitter-textobjects'
     use 'neovim/nvim-lspconfig'
+    use 'williamboman/nvim-lsp-installer'
     use 'ray-x/lsp_signature.nvim'
     use 'onsails/lspkind-nvim'
     use 'hrsh7th/cmp-nvim-lsp'
@@ -23,7 +24,6 @@ require('packer').startup(function()
     use 'L3MON4D3/LuaSnip'
     use "rafamadriz/friendly-snippets"
     use 'vim-test/vim-test'
-    use 'williamboman/nvim-lsp-installer'
 end)
 
 vim.cmd[[set termguicolors]]
@@ -49,6 +49,7 @@ require('nvim-tree').setup({
         width = 35
     }
 })
+vim.cmd[[let g:nvim_tree_disable_window_picker = 1]]
 
 require'lualine'.setup({
     options = {
