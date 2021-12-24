@@ -23,6 +23,7 @@ require('packer').startup(function()
     use 'L3MON4D3/LuaSnip'
     use "rafamadriz/friendly-snippets"
     use 'vim-test/vim-test'
+    use 'williamboman/nvim-lsp-installer'
 end)
 
 vim.cmd[[set termguicolors]]

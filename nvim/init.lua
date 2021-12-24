@@ -8,8 +8,6 @@
 -- brew install rg
 -- brew install bat
 -- brew install delta
--- brew install efm-langserver
--- brew install lua-language-server && ln -s <path-to-installation> ~/lua-language-server
 
 require'lsp'
 require'options'

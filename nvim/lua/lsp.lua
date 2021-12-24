@@ -1,13 +1,5 @@
-local nvim_lsp = require'lspconfig'
+local lsp_installer = require "nvim-lsp-installer"
 local lsp_signature = require'lsp_signature'
-local home = os.getenv('HOME')
-
-local sumneko_root_path = home..'/lua-language-server'
-local sumneko_binary = sumneko_root_path.."/bin/lua-language-server"
-local runtime_path = vim.split(package.path, ';')
-
-table.insert(runtime_path, "lua/?.lua")
-table.insert(runtime_path, "lua/?/init.lua")
 
 -- use lsp_signature instead of native signature ui
 vim.g.completion_enable_auto_signature = false
@@ -111,22 +103,6 @@ local on_attach = function(client, bufnr)
     end
 end
 
-local servers = {
-    -- "bashls",
-    -- "jsonls",
-    -- "html",
-    -- "yamlls",
-    "tsserver",
-    "solargraph"
-}
-
-for _, s in ipairs(servers) do
-    nvim_lsp[s].setup({
-        on_attach = on_attach,
-        capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-    })
-end
-
 local prettier = {
     formatCommand = 'prettier --no-semi --stdin --stdin-filepath "${INPUT}"',
     formatStdin = true
@@ -142,50 +118,33 @@ local eslint = {
     }
 }
 
-nvim_lsp.efm.setup({
-    -- cmd = { "efm-langserver", "-logfile", "/tmp/efm.log" },
-    on_attach = on_attach,
-    init_options = {
-        documentFormatting = true,
-        codeAction = true
-    },
-    filetypes = { 'ruby', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
-    settings = {
-        log_level = 1,
-        log_file = '~/efm.log',
-        rootMarkers = { ".git/" },
-        languages = {
-            javascript = { eslint, prettier },
-            javascriptreact = { eslint, prettier },
-            typescript = { eslint, prettier },
-            typescriptreact = { eslint, prettier }
-        }
-    },
-})
+lsp_installer.on_server_ready(function(server)
+    local default_opts = {
+        on_attach = on_attach,
+        capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
+    }
 
-nvim_lsp.sumneko_lua.setup({
-    cmd = {sumneko_binary, "-E", sumneko_root_path .. "/libexec/main.lua"};
-    capabilities = cmp_nvim_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-    settings = {
-        Lua = {
-            runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                version = 'LuaJIT',
-                -- Setup your lua path
-                path = runtime_path,
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = {'vim', 'use'},
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-                enable = false,
-            },
-        },
-    },
-})
+    local server_opts = {
+        ["efm"] = function()
+            default_opts.init_options = {
+                documentFormatting = true,
+                codeAction = true
+            }
+            default_opts.filetypes = { 'ruby', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
+            default_opts.settings = {
+                log_level = 1,
+                log_file = '~/efm.log',
+                rootMarkers = { ".git/" },
+                languages = {
+                    javascript = { eslint, prettier },
+                    javascriptreact = { eslint, prettier },
+                    typescript = { eslint, prettier },
+                    typescriptreact = { eslint, prettier }
+                }
+            }
+        end,
+    }
+
+    local server_options = server_opts[server.name] and server_opts[server.name]() or default_opts
+    server:setup(server_options)
+end)
