@@ -9,10 +9,11 @@
 -- brew install bat
 -- brew install delta
 
+require'completion'
 require'lsp'
 require'options'
 require'packages'
-require'mappings'
+require'keymap'
 require'treesitter'
 
 vim.cmd[[filetype plugin on]]

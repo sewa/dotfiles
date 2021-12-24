@@ -49,7 +49,7 @@ require('nvim-tree').setup({
         width = 35
     }
 })
-vim.cmd[[let g:nvim_tree_disable_window_picker = 1]]
+vim.g.nvim_tree_disable_window_picker = 1
 
 require'lualine'.setup({
     options = {

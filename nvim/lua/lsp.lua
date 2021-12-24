@@ -1,71 +1,17 @@
 local lsp_installer = require "nvim-lsp-installer"
 local lsp_signature = require'lsp_signature'
+local cmp_nvim_lsp = require('cmp_nvim_lsp')
+-- require 'vim.lsp.log'.set_level("trace")
 
 -- use lsp_signature instead of native signature ui
 vim.g.completion_enable_auto_signature = false
 
-require 'vim.lsp.log'.set_level("trace")
-
-local cmp = require'cmp'
-local cmp_nvim_lsp = require('cmp_nvim_lsp')
-local luasnip = require("luasnip")
-luasnip.filetype_extend("ruby", {"rails"})
-require("luasnip/loaders/from_vscode").lazy_load()
-
-local has_words_before = function()
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-end
-
-cmp.setup({
-    snippet = {
-        expand = function(args)
-            require("luasnip").lsp_expand(args.body)
-        end,
-    },
-    mapping = {
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.close(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
-        ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            elseif has_words_before() then
-                cmp.complete()
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
-
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
-    },
-    sources = {
-        { name = 'luasnip' },
-        { name = 'nvim_lsp' },
-        { name = 'buffer' },
-    }
-})
-
 local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-    -- completion.on_attach()
     lsp_signature.on_attach()
 
     local opts = { noremap=true, silent=true }
 
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
     buf_set_keymap('n', '<leader>r', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
     buf_set_keymap('n', '<leader>lG', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', '<leader>lg', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
@@ -81,7 +27,7 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', '<leader>lwr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
     buf_set_keymap('n', '<leader>lws', ':FzfLua lsp_live_workspace_symbols<cr>', opts)
     -- buf_set_keymap('n', '<space>d', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-    --   -- Set some keybinds conditional on server capabilities
+
     if client.resolved_capabilities.document_formatting then
         buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
     elseif client.resolved_capabilities.document_range_formatting then
@@ -140,6 +86,15 @@ lsp_installer.on_server_ready(function(server)
                     javascriptreact = { eslint, prettier },
                     typescript = { eslint, prettier },
                     typescriptreact = { eslint, prettier }
+                }
+            }
+        end,
+        ["sumneko_lua"] = function()
+            default_opts.settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { 'vim', 'use' }
+                    }
                 }
             }
         end,
