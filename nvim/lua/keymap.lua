@@ -6,8 +6,8 @@ vim.g.mapleader = ' '
 local options = { noremap = true, silent = true }
 
 -- Editor
-map('n', '<leader>qq', ':qa<CR>', {})
-map('n', '<leader>eq', ':qa!<CR>', {})
+map('n', '<leader>qq', ':qa<cr>', {})
+map('n', '<leader>eq', ':qa!<cr>', {})
 map('n', '<leader>ec', ':FzfLua colorschemes<cr>', options)
 
 -- Tree
@@ -20,7 +20,7 @@ map('n', '<leader>cl', ':CommentToggle<cr>', options)
 map('v', '<leader>cl', ':CommentToggle<cr>', options)
 
 -- Files
-map('n', '<leader>fs', ':w<CR>', {})
+map('n', '<leader>fs', ':w<cr>', {})
 map('n', '<leader>ff', ":FzfLua files<cr>", options)
 map('n', '<leader>fl', ":FzfLua loclist<cr>", options)
 map('n', '<leader>fo', ":FzfLua oldfiles<cr>", options)

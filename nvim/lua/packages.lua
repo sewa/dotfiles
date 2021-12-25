@@ -24,13 +24,17 @@ require('packer').startup(function()
     use 'L3MON4D3/LuaSnip'
     use "rafamadriz/friendly-snippets"
     use 'vim-test/vim-test'
+    use 'preservim/vimux'
 end)
 
 vim.cmd[[set termguicolors]]
 vim.cmd[[let ayucolor="mirage"]]
 vim.cmd[[colorscheme ayu]]
-vim.cmd[[let test#strategy = "neovim"]]
+vim.cmd[[let test#strategy = "vimux"]]
 vim.cmd[[let test#ruby#use_spring_binstub = 1]]
+vim.cmd[[let g:VimuxOrientation = "h"]]
+vim.cmd[[let g:VimuxHeight = "40"]]
+vim.cmd[[let g:VimuxCloseOnExit = 1]]
 
 require'fzf-lua'.setup {
     winopts = {
