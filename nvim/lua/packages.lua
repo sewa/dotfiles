@@ -35,6 +35,7 @@ vim.cmd[[let test#ruby#use_spring_binstub = 1]]
 vim.cmd[[let g:VimuxOrientation = "h"]]
 vim.cmd[[let g:VimuxHeight = "40"]]
 vim.cmd[[let g:VimuxCloseOnExit = 1]]
+vim.cmd[[let g:VimuxUseNearest = 0]]
 
 require'fzf-lua'.setup {
     winopts = {
