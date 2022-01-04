@@ -1,73 +1,61 @@
-ZSH=$HOME/.oh-my-zsh
+# Prerequisites:
+# brew install fzf
+# brew install exa
 
-ZSH_THEME="robbyrussell"
+export CLICOLOR=1
+export EDITOR="nvim"
 
-plugins=(git)
+# Homebrew
+export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
 
-source $ZSH/oh-my-zsh.sh
-
-export ZSH=$HOME/.oh-my-zsh
-
-# export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
-
-export PATH=/usr/local/bin:$PATH
-export PATH=/usr/local/sbin:$PATH
-
-export PATH=$PATH:/opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin
-
-export PATH=$PATH:/usr/local/mysql/bin
-
-export GOPATH=$HOME
-export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:/usr/local/Cellar/go/1.2/libexec/bin
-export PATH="$PATH:/.rvm/bin:$HOME"
-
-alias b="bundle exec"
-
-alias nginx_start='sudo launchctl load -w /Library/LaunchAgents/homebrew.mxcl.nginx.plist'
-alias nginx_stop='sudo launchctl unload -w /Library/LaunchAgents/homebrew.mxcl.nginx.plist'
-alias nginx_restart='nginx_stop; nginx_start;'
+# Mongodb
+export PATH="/usr/local/opt/mongodb-community@3.4/bin:$PATH"
 
 # Postgres
 export PGDATA=$HOME/Postgres@11
 export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 
-# Mongodb
-export PATH="/usr/local/opt/mongodb-community@3.4/bin:$PATH"
+# History
+export HISTSIZE=1000000
+export SAVEHIST=1000000
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt INC_APPEND_HISTORY_TIME
+setopt EXTENDED_HISTORY
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+# Prompt
+autoload -Uz vcs_info
+zstyle ':vcs_info:git*' formats " > %b"
+precmd() {
+    vcs_info
+}
+setopt prompt_subst
+PROMPT='%F{blue}%2/%F{yellow}${vcs_info_msg_0_} > %F{reset}'
+
+# RVM
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 export PATH="$PATH:$HOME/.rvm/bin"
 
-# for capybara webkit gem mssngr web apps
-export PATH="/Users/severin/Qt5.5.0/5.5/clang_64/bin:$PATH"
+# NVM
+source $(brew --prefix nvm)/nvm.sh --no-use
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+# Autocompletion
+autoload -Uz compinit && compinit
+source ../fzf-tab/fzf-tab.plugin.zsh
 
-# System node
-export PATH="/usr/local/opt/node@10/bin:$PATH"
+# FZF
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# NVM node
-export NVM_DIR="$HOME/.nvm"
-source $(brew --prefix nvm)/nvm.sh
+zstyle ':completion:*:git-checkout:*' sort false
 
-autoload -U add-zsh-hook
-load-nvmrc() {
-  local node_version="$(nvm version)"
-  local nvmrc_path="$(nvm_find_nvmrc)"
+zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+zstyle ':fzf-tab:*' fzf-bindings 'space:accept'
 
-  if [ -n "$nvmrc_path" ]; then
-    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*:descriptions' format '[%d]'
 
-    if [ "$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "$nvmrc_node_version" != "$node_version" ]; then
-      nvm use
-    fi
-  elif [ "$node_version" != "$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
+# Alias
+alias ll='exa --long --git'

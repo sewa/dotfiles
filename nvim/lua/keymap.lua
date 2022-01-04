@@ -56,11 +56,11 @@ map("n", "<leader>xr", "<cmd>Trouble lsp_references<cr>", options)
 
 -- Tmux
 map("n", "<Leader>mo", ":VimuxOpenRunner<cr>", options)
-map("n", "<Leader>mc", ":VimuxCloseRunner<cr>", options)
+map("n", "<Leader>md", ":VimuxCloseRunner<cr>", options)
 map("n", "<Leader>mt", ":VimuxTogglePane<cr>", options)
 map("n", "<Leader>mi", ":VimuxInspectRunner<cr>", options)
 map("n", "<Leader>mz", ":VimuxZoomRunner<cr>", options)
-map("n", "<Leader>mr", ":VimuxPromptCommand('bin/rails c')<cr>", options)
+map("n", "<Leader>mc", ":VimuxPromptCommand('bin/rails c')<cr>", options)
 
 -- Test
 map("n", "<leader>tt", ":TestNearest<cr>", options)
