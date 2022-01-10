@@ -43,12 +43,14 @@ source $(brew --prefix nvm)/nvm.sh --no-use
 
 # Autocompletion
 autoload -Uz compinit && compinit
-source ../fzf-tab/fzf-tab.plugin.zsh
+source "$HOME/Projects/fzf-tab/fzf-tab.plugin.zsh"
 
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-zstyle ':completion:*:git-checkout:*' sort false
+zstyle ':completion:complete:*:options' sort false
+zstyle ':completion:complete:git-checkout:argument-rest' sort false
+# zstyle ':completion:*:git-checkout:*' sort false
 
 zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
