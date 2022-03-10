@@ -1,6 +1,5 @@
 # Prerequisites:
 # brew install fzf
-# brew install exa
 
 export CLICOLOR=1
 export EDITOR="nvim"
@@ -48,16 +47,8 @@ source "$HOME/Projects/fzf-tab/fzf-tab.plugin.zsh"
 # FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-zstyle ':completion:complete:*:options' sort false
-zstyle ':completion:complete:git-checkout:argument-rest' sort false
-# zstyle ':completion:*:git-checkout:*' sort false
-
 zstyle ':fzf-tab:*' switch-group ',' '.'
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
 zstyle ':fzf-tab:*' fzf-bindings 'space:accept'
 
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:descriptions' format '[%d]'
-
-# Alias
-alias ll='exa --long --git'
