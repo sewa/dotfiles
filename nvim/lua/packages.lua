@@ -12,8 +12,47 @@ require('packer').startup(function()
     use 'tpope/vim-repeat'
     use 'terrortylor/nvim-comment'
     use 'nvim-lualine/lualine.nvim'
-    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate', config = function()
+        require'nvim-treesitter.configs'.setup {
+            ensure_installed = { 'ruby', 'lua', 'typescript', 'javascript', 'css', 'bash', 'elixir', 'html' },
+            sync_install = false,
+            refactor = {
+                smart_rename = {
+                    enable = true,
+                    keymaps = {
+                        smart_rename = 'grr',
+                    },
+                },
+            },
+            textobjects = {
+                select = {
+                    enable = true,
+                    lookahead = true,
+                    keymaps = {
+                        ['af'] = '@function.outer',
+                        ['if'] = '@function.inner',
+                        ['ab'] = '@block.outer',
+                        ['ib'] = '@block.inner',
+                        ['ac'] = '@call.outer',
+                        ['ic'] = '@call.inner',
+                    },
+                },
+                swap = {
+                    enable = true,
+                    swap_next = {
+                        ['<leader>a'] = '@parameter.inner',
+                    },
+                    swap_previous = {
+                        ['<leader>A'] = '@parameter.inner',
+                    },
+                },
+            },
+        }
+    end}
+    use 'nvim-treesitter/nvim-treesitter-context'
     use 'nvim-treesitter/nvim-treesitter-textobjects'
+    use 'nvim-treesitter/nvim-treesitter-refactor'
+
     use 'neovim/nvim-lspconfig'
     use 'williamboman/nvim-lsp-installer'
     use 'ray-x/lsp_signature.nvim'

@@ -14,7 +14,6 @@ require'lsp'
 require'options'
 require'packages'
 require'keymap'
-require'treesitter'
 
 vim.cmd[[filetype plugin on]]
 vim.cmd[[filetype indent on]]

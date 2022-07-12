@@ -76,7 +76,7 @@ lsp_installer.on_server_ready(function(server)
                 documentFormatting = true,
                 codeAction = true
             }
-            default_opts.filetypes = { 'ruby', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
+            default_opts.filetypes = { 'ruby', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'elixir' }
             default_opts.settings = {
                 log_level = 1,
                 log_file = '~/efm.log',
