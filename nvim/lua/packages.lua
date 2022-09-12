@@ -12,9 +12,10 @@ require('packer').startup(function()
     use 'tpope/vim-repeat'
     use 'terrortylor/nvim-comment'
     use 'nvim-lualine/lualine.nvim'
+    use 'elixir-editors/vim-elixir'
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate', config = function()
         require'nvim-treesitter.configs'.setup {
-            ensure_installed = { 'ruby', 'lua', 'typescript', 'javascript', 'css', 'bash', 'elixir', 'html' },
+            ensure_installed = { 'ruby', 'lua', 'typescript', 'javascript', 'css', 'bash', 'elixir', 'eex', 'heex', 'erlang', 'html' },
             sync_install = false,
             refactor = {
                 smart_rename = {
