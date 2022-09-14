@@ -11,6 +11,7 @@ require('packer').startup(function()
     use 'tpope/vim-unimpaired'
     use 'tpope/vim-repeat'
     use 'terrortylor/nvim-comment'
+    use 'lewis6991/gitsigns.nvim'
     use 'nvim-lualine/lualine.nvim'
     use 'elixir-editors/vim-elixir'
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate', config = function()
@@ -49,7 +50,7 @@ require('packer').startup(function()
                 },
             },
         }
-    end}
+    end }
     use 'nvim-treesitter/nvim-treesitter-context'
     use 'nvim-treesitter/nvim-treesitter-textobjects'
     use 'nvim-treesitter/nvim-treesitter-refactor'
@@ -112,3 +113,5 @@ require'nvim_comment'.setup{
     comment_empty = false,
     create_mappings= false
 }
+
+require('gitsigns').setup()

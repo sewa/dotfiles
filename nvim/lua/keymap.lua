@@ -73,7 +73,9 @@ map("n", "<leader>tv", ":TestVisit<cr>", options)
 map('n', '<leader>gs', ':FzfLua git_status<cr>', options)
 map('n', '<leader>gl', ':FzfLua git_commits<cr>', options)
 map('n', '<leader>gc', ':FzfLua git_bcommits<cr>', options)
-map('n', '<leader>gb', ':FzfLua git_branches<cr>', options)
+map('n', '<leader>gb', ':Gitsigns blame_line<cr>', options)
+map('n', '<leader>gtb', ':Gitsigns toggle_current_line_blame<cr>', options)
+map('n', '<leader>gtb', ':Gitsigns diffthis<cr>', options)
 
 -- Windows
 map('n', '<leader>w/', '<C-W>v', options)
