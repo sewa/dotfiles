@@ -46,5 +46,8 @@ opt.smarttab       = true
 opt.autoindent     = true
 opt.smartindent    = true
 opt.wrap           = true
+opt.shiftwidth     = 2
+opt.tabstop        = 2
+opt.softtabstop    = 2
 
 opt.switchbuf      = "useopen"
