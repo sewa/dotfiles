@@ -20,5 +20,5 @@ vim.cmd[[filetype indent on]]
 
 vim.cmd[[autocmd BufWritePre * :%s/\s\+$//e]]
 vim.cmd[[autocmd FileType lua setlocal shiftwidth=4 softtabstop=4 tabstop=8]]
-vim.cmd[[autocmd FileType typescript setlocal shiftwidth=2 softtabstop=2 tabstop=4]]
+vim.cmd[[autocmd FileType css,scss,typescript setlocal shiftwidth=2 softtabstop=2 tabstop=2]]
 vim.cmd[[autocmd BufRead,BufNewFile *.kbd set filetype=kbd]]
