@@ -69,8 +69,8 @@ require('packer').startup(function()
 end)
 
 vim.cmd[[set termguicolors]]
-vim.cmd[[let ayucolor="mirage"]]
 vim.cmd[[colorscheme ayu]]
+vim.cmd[[let ayucolor="mirage"]]
 vim.cmd[[let test#strategy = "vimux"]]
 vim.cmd[[let test#ruby#use_spring_binstub = 1]]
 vim.cmd[[let g:VimuxOrientation = "h"]]
