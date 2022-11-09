@@ -1,7 +1,7 @@
 require('packer').startup(function()
     use 'wbthomason/packer.nvim'
     use 'eddyekofo94/gruvbox-flat.nvim'
-    use 'ayu-theme/ayu-vim'
+    use 'shatur/neovim-ayu'
     use "folke/trouble.nvim"
     use "folke/which-key.nvim"
     use 'vijaymarupudi/nvim-fzf'
@@ -68,9 +68,7 @@ require('packer').startup(function()
     use 'preservim/vimux'
 end)
 
-vim.cmd[[set termguicolors]]
-vim.cmd[[colorscheme ayu]]
-vim.cmd[[let ayucolor="mirage"]]
+vim.cmd[[colorscheme ayu-mirage]]
 vim.cmd[[let test#strategy = "vimux"]]
 vim.cmd[[let test#ruby#use_spring_binstub = 1]]
 vim.cmd[[let g:VimuxOrientation = "h"]]

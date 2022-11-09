@@ -12,8 +12,8 @@
 require'completion'
 require'lsp'
 require'options'
-require'packages'
 require'keymap'
+require'packages'
 
 vim.cmd[[filetype plugin on]]
 vim.cmd[[filetype indent on]]
