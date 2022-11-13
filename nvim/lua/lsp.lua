@@ -1,6 +1,7 @@
-local lsp_installer = require "nvim-lsp-installer"
+local nvim_lsp = require'lspconfig'
+local lsp_installer = require'nvim-lsp-installer'
 local lsp_signature = require'lsp_signature'
-local cmp_nvim_lsp = require('cmp_nvim_lsp')
+local cmp_nvim_lsp = require'cmp_nvim_lsp'
 -- require 'vim.lsp.log'.set_level("trace")
 
 -- use lsp_signature instead of native signature ui
@@ -64,6 +65,16 @@ local eslint = {
     }
 }
 
+nvim_lsp.solargraph.setup{
+    settings = {
+        solargraph = {
+            diagnostics = true,
+            completion = true,
+            formatting = true
+        }
+    }
+}
+
 lsp_installer.on_server_ready(function(server)
     local default_opts = {
         on_attach = on_attach,
@@ -76,7 +87,7 @@ lsp_installer.on_server_ready(function(server)
                 documentFormatting = true,
                 codeAction = true
             }
-            default_opts.filetypes = { 'ruby', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'elixir' }
+            default_opts.filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'elixir' }
             default_opts.settings = {
                 log_level = 1,
                 log_file = '~/efm.log',
@@ -97,7 +108,7 @@ lsp_installer.on_server_ready(function(server)
                     }
                 }
             }
-        end,
+        end
     }
 
     local server_options = server_opts[server.name] and server_opts[server.name]() or default_opts

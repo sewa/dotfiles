@@ -62,13 +62,11 @@ require('packer').startup(function()
     use 'hrsh7th/cmp-nvim-lsp'
     use 'hrsh7th/cmp-buffer'
     use 'hrsh7th/nvim-cmp'
-    use 'L3MON4D3/LuaSnip'
-    use "rafamadriz/friendly-snippets"
     use 'vim-test/vim-test'
     use 'preservim/vimux'
 end)
 
-vim.cmd[[colorscheme ayu-mirage]]
+vim.cmd[[colorscheme ayu]]
 vim.cmd[[let test#strategy = "vimux"]]
 vim.cmd[[let test#ruby#use_spring_binstub = 1]]
 vim.cmd[[let g:VimuxOrientation = "h"]]
