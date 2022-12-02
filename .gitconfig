@@ -6,3 +6,5 @@ email = schwanck@promptus-partners.de
 	excludesfile = ~/.gitignore
 [pull]
 	rebase = false
+[push]
+	autoSetupRemote = true
