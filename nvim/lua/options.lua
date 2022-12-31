@@ -8,6 +8,7 @@ opt.hidden        = true
 -- Search
 opt.hlsearch      = false
 opt.incsearch     = true
+opt.inccommand    = 'split'
 opt.ignorecase    = true
 opt.smartcase     = true
 

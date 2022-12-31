@@ -65,6 +65,7 @@ require('packer').startup(function()
     use 'L3MON4D3/LuaSnip'
     use 'vim-test/vim-test'
     use 'preservim/vimux'
+    use {'github/copilot.vim', branch = 'release' }
 end)
 
 vim.cmd[[colorscheme ayu]]
