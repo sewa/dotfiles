@@ -30,9 +30,9 @@ local on_attach = function(client, bufnr)
     -- buf_set_keymap('n', '<space>d', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
 
     if client.server_capabilities.documentFormattingProvider then
-        buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+        buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.format { async = true }<CR>", opts)
     elseif client.server_capabilities.documentRangeFormattingProvider then
-        buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+        buf_set_keymap("n", "<leader>lf", "<cmd>lua vim.lsp.buf.format { async = true }<CR>", opts)
     end
 
     -- Set autocommands conditional on server_capabilities
@@ -87,7 +87,7 @@ lsp_installer.on_server_ready(function(server)
                 documentFormatting = true,
                 codeAction = true
             }
-            default_opts.filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'elixir' }
+            default_opts.filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'elixir', 'eex', 'heex' }
             default_opts.settings = {
                 log_level = 1,
                 log_file = '~/efm.log',
