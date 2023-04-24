@@ -55,8 +55,9 @@ require('packer').startup(function()
     use 'nvim-treesitter/nvim-treesitter-textobjects'
     use 'nvim-treesitter/nvim-treesitter-refactor'
 
+    use "williamboman/mason.nvim"
+    use "williamboman/mason-lspconfig.nvim"
     use 'neovim/nvim-lspconfig'
-    use 'williamboman/nvim-lsp-installer'
     use 'ray-x/lsp_signature.nvim'
     use 'onsails/lspkind-nvim'
     use 'hrsh7th/cmp-nvim-lsp'
@@ -65,7 +66,6 @@ require('packer').startup(function()
     use 'L3MON4D3/LuaSnip'
     use 'vim-test/vim-test'
     use 'preservim/vimux'
-    use {'github/copilot.vim', branch = 'release' }
 end)
 
 vim.cmd[[colorscheme ayu]]
