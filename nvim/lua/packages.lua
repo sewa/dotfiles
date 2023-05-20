@@ -4,17 +4,44 @@ require('lazy').setup({
     'neovim/nvim-lspconfig',
     'vijaymarupudi/nvim-fzf',
     'onsails/lspkind-nvim',
-    'vim-test/vim-test',
-    'preservim/vimux',
     'tpope/vim-surround',
     'tpope/vim-unimpaired',
     'tpope/vim-repeat',
 
+    {
+        "ray-x/lsp_signature.nvim",
+        config = function()
+            require "lsp_signature".setup({
+                bind = true,
+                handler_opts = {
+                    border = "rounded"
+                }
+            })
+        end
+    },
+
+    {
+        'preservim/vimux',
+        config = function()
+            vim.cmd [[let g:VimuxOrientation = "h"]]
+            vim.cmd [[let g:VimuxHeight = "40"]]
+            vim.cmd [[let g:VimuxCloseOnExit = 1]]
+            vim.cmd [[let g:VimuxUseNearest = 0]]
+        end
+    },
+
+    {
+        'vim-test/vim-test',
+        config = function()
+            vim.cmd [[let test#strategy = "vimux"]]
+            vim.cmd [[let test#ruby#use_spring_binstub = 1]]
+        end
+    },
 
     {
         'projekt0n/github-nvim-theme',
-        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-        priority = 1000, -- make sure to load this before all the other start plugins
+        lazy = false,
+        priority = 1000,
         config = function()
             vim.cmd('colorscheme github_dark')
         end,
@@ -186,10 +213,3 @@ require('lazy').setup({
         end
     },
 })
-
-vim.cmd [[let test#strategy = "vimux"]]
-vim.cmd [[let test#ruby#use_spring_binstub = 1]]
-vim.cmd [[let g:VimuxOrientation = "h"]]
-vim.cmd [[let g:VimuxHeight = "40"]]
-vim.cmd [[let g:VimuxCloseOnExit = 1]]
-vim.cmd [[let g:VimuxUseNearest = 0]]

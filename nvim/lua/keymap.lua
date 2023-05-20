@@ -62,9 +62,9 @@ map("n", "<Leader>mz", ":VimuxZoomRunner<cr>", options)
 map("n", "<Leader>mc", ":VimuxPromptCommand('bin/rails c')<cr>", options)
 
 -- Test
-map("n", "<leader>tt", ":TestNearest<cr>", options)
-map("n", "<leader>tb", ":TestFile<cr>", options)
 map("n", "<leader>ta", ":TestSuite<cr>", options)
+map("n", "<leader>tb", ":TestFile<cr>", options)
+map("n", "<leader>tt", ":TestNearest<cr>", options)
 map("n", "<leader>tl", ":TestLast<cr>", options)
 map("n", "<leader>tv", ":TestVisit<cr>", options)
 
