@@ -9,11 +9,27 @@
 -- brew install bat
 -- brew install delta
 
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
+require'packages'
 require'completion'
 require'lsp'
 require'options'
 require'keymap'
-require'packages'
 
 vim.cmd[[filetype plugin on]]
 vim.cmd[[filetype indent on]]

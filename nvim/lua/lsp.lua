@@ -56,7 +56,8 @@ require('mason-lspconfig').setup({
     ensure_installed = {
         'efm',
         'tsserver',
-        'solargraph'
+        'solargraph',
+        'elixir-ls'
     }
 })
 

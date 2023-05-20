@@ -1,10 +1,10 @@
 local cmp = require 'cmp'
-local luasnip = require 'luasnip'
+-- local luasnip = require 'luasnip'
 
 cmp.setup({
     snippet = {
         expand = function(args)
-            luasnip.lsp_expand(args.body)
+            -- luasnip.lsp_expand(args.body)
         end,
     },
     mapping = {
@@ -22,7 +22,7 @@ cmp.setup({
         end, { "i", "s" }),
     },
     sources = {
-        { name = 'luasnip' },
+        -- { name = 'luasnip' },
         { name = 'nvim_lsp' },
         { name = 'buffer' },
     }
