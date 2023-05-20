@@ -26,7 +26,6 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 require'packages'
-require'completion'
 require'lsp'
 require'options'
 require'keymap'

@@ -2,21 +2,100 @@ require('lazy').setup({
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
-
-    'shatur/neovim-ayu',
-    'folke/trouble.nvim',
-    'folke/which-key.nvim',
     'vijaymarupudi/nvim-fzf',
-    'ibhagwan/fzf-lua',
-    'kyazdani42/nvim-tree.lua',
+    'onsails/lspkind-nvim',
+    'vim-test/vim-test',
+    'preservim/vimux',
     'tpope/vim-surround',
     'tpope/vim-unimpaired',
     'tpope/vim-repeat',
-    'terrortylor/nvim-comment',
-    'lewis6991/gitsigns.nvim',
-    'nvim-lualine/lualine.nvim',
+
+
+    {
+        'projekt0n/github-nvim-theme',
+        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+        priority = 1000, -- make sure to load this before all the other start plugins
+        config = function()
+            vim.cmd('colorscheme github_dark')
+        end,
+    },
+
+    {
+        'folke/trouble.nvim',
+        config = function()
+            require 'trouble'.setup {
+                icons = false
+            }
+        end
+    },
+
+    {
+        'folke/which-key.nvim',
+        config = function()
+            require 'which-key'.setup {}
+        end
+    },
+
+    {
+        'ibhagwan/fzf-lua',
+        config = function()
+            require 'fzf-lua'.setup {
+                winopts = {
+                    preview = {
+                        horizontal = 'right:50%',
+                        flip_columns = 200,
+                    },
+                    height = 0.95,
+                    width = 0.95,
+                    border = true,
+                }
+            }
+        end
+    },
+
+    {
+        'kyazdani42/nvim-tree.lua',
+        config = function()
+            require('nvim-tree').setup({
+                view = {
+                    width = 35
+                }
+            })
+            vim.g.nvim_tree_disable_window_picker = 1
+        end
+    },
+
+    {
+        'terrortylor/nvim-comment',
+        config = function()
+            require 'nvim_comment'.setup {
+                comment_empty = false,
+                create_mappings = false
+            }
+        end
+    },
+
+    {
+        'lewis6991/gitsigns.nvim',
+        config = function()
+            require('gitsigns').setup()
+        end
+    },
+
+    {
+        'nvim-lualine/lualine.nvim',
+        config = function()
+            require 'lualine'.setup({
+                options = {
+                    theme = 'ayu'
+                }
+            })
+        end
+    },
+
     'elixir-editors/vim-elixir',
     { 'elixir-tools/elixir-tools.nvim', dependencies = { 'nvim-lua/plenary.nvim' } },
+
     {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
@@ -65,58 +144,52 @@ require('lazy').setup({
         end
     },
 
-    'ray-x/lsp_signature.nvim',
-    'onsails/lspkind-nvim',
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/nvim-cmp',
-    'L3MON4D3/LuaSnip',
-    'vim-test/vim-test',
-    'preservim/vimux',
+    {
+        'hrsh7th/nvim-cmp',
+        dependencies = { 'hrsh7th/cmp-nvim-lsp', 'hrsh7th/cmp-buffer' },
+        config = function()
+            local cmp = require 'cmp'
+            local lspkind = require('lspkind')
+            cmp.setup({
+                formatting = {
+                    format = lspkind.cmp_format({
+                        mode = 'symbol', -- show only symbol annotations
+                        -- maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+                        -- ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+                    })
+                },
+                mapping = {
+                    ['<C-e>'] = cmp.mapping({
+                        i = cmp.mapping.abort(),
+                        c = cmp.mapping.close(),
+                    }),
+                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+                    ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({
+                        behavior = cmp.SelectBehavior.Select
+                    }), { 'i', 'c' }),
+                    ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({
+                        behavior = cmp.SelectBehavior.Select
+                    }), { 'i', 'c' }),
+                    ['<Tab>'] = cmp.mapping(function(fallback)
+                        if cmp.visible() then
+                            cmp.select_next_item()
+                        else
+                            fallback()
+                        end
+                    end, { "i", "s" }),
+                },
+                sources = {
+                    { name = 'nvim_lsp' },
+                    { name = 'buffer' },
+                }
+            })
+        end
+    },
 })
 
-vim.cmd [[colorscheme ayu]]
 vim.cmd [[let test#strategy = "vimux"]]
 vim.cmd [[let test#ruby#use_spring_binstub = 1]]
 vim.cmd [[let g:VimuxOrientation = "h"]]
 vim.cmd [[let g:VimuxHeight = "40"]]
 vim.cmd [[let g:VimuxCloseOnExit = 1]]
 vim.cmd [[let g:VimuxUseNearest = 0]]
-
-require 'fzf-lua'.setup {
-    winopts = {
-        preview = {
-            horizontal = 'right:50%',
-            flip_columns = 200,
-        },
-        height = 0.95,
-        width = 0.95,
-        border = true,
-    }
-}
-
-require('nvim-tree').setup({
-    view = {
-        width = 35
-    }
-})
-vim.g.nvim_tree_disable_window_picker = 1
-
-require 'lualine'.setup({
-    options = {
-        theme = 'ayu'
-    }
-})
-
-require 'which-key'.setup {}
-
-require 'trouble'.setup {
-    icons = false
-}
-
-require 'nvim_comment'.setup {
-    comment_empty = false,
-    create_mappings = false
-}
-
-require('gitsigns').setup()

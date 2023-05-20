@@ -1,7 +1,7 @@
-local lsp_signature = require'lsp_signature'
+-- local lsp_signature = require'lsp_signature'
 
--- use lsp_signature instead of native signature ui
-vim.g.completion_enable_auto_signature = false
+-- -- use lsp_signature instead of native signature ui
+-- vim.g.completion_enable_auto_signature = false
 
 require("mason").setup()
 require("mason-lspconfig").setup()
