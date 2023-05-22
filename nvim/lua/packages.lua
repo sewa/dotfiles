@@ -7,10 +7,15 @@ require('lazy').setup({
     'tpope/vim-surround',
     'tpope/vim-unimpaired',
     'tpope/vim-repeat',
+    {
+        'L3MON4D3/LuaSnip',
+        dependencies = { "rafamadriz/friendly-snippets" }
+    },
 
     {
         "ray-x/lsp_signature.nvim",
         config = function()
+            -- vim.g.completion_enable_auto_signature = false
             require "lsp_signature".setup({
                 bind = true,
                 handler_opts = {
@@ -175,14 +180,26 @@ require('lazy').setup({
         'hrsh7th/nvim-cmp',
         dependencies = { 'hrsh7th/cmp-nvim-lsp', 'hrsh7th/cmp-buffer' },
         config = function()
+            local has_words_before = function()
+                unpack = unpack or table.unpack
+                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+                return col ~= 0 and
+                    vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+            end
             local cmp = require 'cmp'
             local lspkind = require('lspkind')
+            local luasnip = require('luasnip')
+            require('luasnip.loaders.from_vscode').lazy_load()
+            require 'luasnip'.filetype_extend('ruby', { 'rails' })
             cmp.setup({
+                snippet = {
+                    expand = function(args)
+                        luasnip.lsp_expand(args.body)
+                    end,
+                },
                 formatting = {
                     format = lspkind.cmp_format({
-                        mode = 'symbol', -- show only symbol annotations
-                        -- maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-                        -- ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+                        mode = 'symbol'
                     })
                 },
                 mapping = {
@@ -200,14 +217,19 @@ require('lazy').setup({
                     ['<Tab>'] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_next_item()
+                        elseif luasnip.expand_or_jumpable() then
+                            luasnip.expand_or_jump()
+                        elseif has_words_before() then
+                            cmp.complete()
                         else
                             fallback()
                         end
-                    end, { "i", "s" }),
+                    end, { 'i', 's' }),
                 },
                 sources = {
+                    { name = 'luasnip' },
                     { name = 'nvim_lsp' },
-                    { name = 'buffer' },
+                    { name = 'buffer' }
                 }
             })
         end
