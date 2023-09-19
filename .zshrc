@@ -5,15 +5,15 @@ export CLICOLOR=1
 export EDITOR="nvim"
 
 # Homebrew
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/sbin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/sbin:$PATH"
 
 # Mongodb
-export PATH="/usr/local/opt/mongodb-community@3.4/bin:$PATH"
+export PATH="/opt/homebrew/opt/mongodb-community@4.4/bin:$PATH"
 
 # Postgres
 export PGDATA=$HOME/Postgres@11
-export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
+export PATH="/opt/homebrew/opt/postgresql@11/bin:$PATH"
 
 # History
 export HISTSIZE=1000000
@@ -38,7 +38,7 @@ PROMPT='%F{blue}%2/%F{yellow}${vcs_info_msg_0_} > %F{reset}'
 export PATH="$PATH:$HOME/.rvm/bin"
 
 # NVM
-source $(brew --prefix nvm)/nvm.sh --no-use
+source $HOME/.nvm/nvm.sh --no-use
 
 # Autocompletion
 autoload -Uz compinit && compinit
@@ -52,3 +52,4 @@ zstyle ':fzf-tab:*' fzf-bindings 'space:accept'
 
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:descriptions' format '[%d]'
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
