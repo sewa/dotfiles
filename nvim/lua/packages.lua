@@ -7,6 +7,23 @@ require('lazy').setup({
     'tpope/vim-surround',
     'tpope/vim-unimpaired',
     'tpope/vim-repeat',
+
+    {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+            require("copilot").setup({})
+        end
+    },
+
+    {
+        "zbirenbaum/copilot-cmp",
+        config = function()
+            require("copilot_cmp").setup()
+        end
+    },
+
     {
         'L3MON4D3/LuaSnip',
         dependencies = { "rafamadriz/friendly-snippets" }
@@ -227,6 +244,7 @@ require('lazy').setup({
                     end, { 'i', 's' }),
                 },
                 sources = {
+                    { name = 'copilot' },
                     { name = 'luasnip' },
                     { name = 'nvim_lsp' },
                     { name = 'buffer' }
