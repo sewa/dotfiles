@@ -52,12 +52,11 @@ require('mason-lspconfig').setup({
         'efm',
         'tsserver',
         'solargraph',
-        'elixir-ls'
     }
 })
 
 local prettier = {
-    formatCommand = 'prettier --no-semi --stdin --stdin-filepath "${INPUT}"',
+    formatCommand = 'prettier --stdin --stdin-filepath "${INPUT}"',
     formatStdin = true
 }
 
@@ -118,5 +117,5 @@ require('mason-lspconfig').setup_handlers({
                 }
             }
         })
-    end
+    end,
 })

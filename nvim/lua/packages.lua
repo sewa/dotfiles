@@ -46,7 +46,7 @@ require('lazy').setup({
         'preservim/vimux',
         config = function()
             vim.cmd [[let g:VimuxOrientation = "h"]]
-            vim.cmd [[let g:VimuxHeight = "40"]]
+            vim.cmd [[let g:VimuxHeight = "35%"]]
             vim.cmd [[let g:VimuxCloseOnExit = 1]]
             vim.cmd [[let g:VimuxUseNearest = 0]]
         end
@@ -143,7 +143,35 @@ require('lazy').setup({
     },
 
     'elixir-editors/vim-elixir',
-    { 'elixir-tools/elixir-tools.nvim', dependencies = { 'nvim-lua/plenary.nvim' } },
+    {
+        "elixir-tools/elixir-tools.nvim",
+        version = "*",
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            local elixir = require("elixir")
+            local elixirls = require("elixir.elixirls")
+
+            elixir.setup {
+                nextls = { enable = true },
+                credo = {},
+                elixirls = {
+                    enable = true,
+                    settings = elixirls.settings {
+                        dialyzerEnabled = false,
+                        enableTestLenses = false,
+                    },
+                    on_attach = function(client, bufnr)
+                        vim.keymap.set("n", "<space>lfp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+                        vim.keymap.set("n", "<space>ltp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+                        vim.keymap.set("v", "<space>lem", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+                    end,
+                }
+            }
+        end,
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
+    },
 
     {
         'nvim-treesitter/nvim-treesitter',

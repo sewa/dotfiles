@@ -37,8 +37,8 @@ PROMPT='%F{blue}%2/%F{yellow}${vcs_info_msg_0_} > %F{reset}'
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 export PATH="$PATH:$HOME/.rvm/bin"
 
-# NVM
-source $HOME/.nvm/nvm.sh --no-use
+# PYTHON
+export PATH="/opt/homebrew/opt/python@3.11/libexec/bin:$PATH"
 
 # Autocompletion
 autoload -Uz compinit && compinit
@@ -53,3 +53,26 @@ zstyle ':fzf-tab:*' fzf-bindings 'space:accept'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:descriptions' format '[%d]'
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export PATH="/opt/homebrew/opt/ansible@8/bin:$PATH"
+export PATH="/opt/homebrew/opt/postgresql@11/bin:$PATH"
+
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
+        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+    else
+        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
