@@ -105,6 +105,12 @@ require('mason-lspconfig').setup_handlers({
     end,
     ['solargraph'] = function()
         lspconfig.solargraph.setup({
+            cmd = {
+                "asdf",
+                "exec",
+                "solargraph",
+                "stdio"
+            },
             settings = {
                 solargraph = {
                     autoformat = true,

@@ -33,10 +33,6 @@ precmd() {
 setopt prompt_subst
 PROMPT='%F{blue}%2/%F{yellow}${vcs_info_msg_0_} > %F{reset}'
 
-# RVM
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-export PATH="$PATH:$HOME/.rvm/bin"
-
 # PYTHON
 export PATH="/opt/homebrew/opt/python@3.11/libexec/bin:$PATH"
 
