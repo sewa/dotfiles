@@ -47,11 +47,8 @@ map('n', '<leader>sl', ':FzfLua grep_last<cr>', options)
 
 -- Trouble
 map("n", "<leader>xx", "<cmd>Trouble<cr>", options)
-map("n", "<leader>xw", "<cmd>Trouble workspace_diagnostics<cr>", options)
-map("n", "<leader>xd", "<cmd>Trouble document_diagnostics<cr>", options)
-map("n", "<leader>xl", "<cmd>Trouble loclist<cr>", options)
-map("n", "<leader>xq", "<cmd>Trouble quickfix<cr>", options)
-map("n", "<leader>xr", "<cmd>Trouble lsp_references<cr>", options)
+map("n", "<leader>xw", "<cmd>FzfLua diagnostics_workspace<cr>", options)
+map("n", "<leader>xd", "<cmd>Trouble diagnostics focus=false filter.buf=0<cr>", options)
 
 -- Tmux
 map("n", "<Leader>mo", ":VimuxOpenRunner<cr>", options)
