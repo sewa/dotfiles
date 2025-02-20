@@ -12,8 +12,11 @@ export PATH="/opt/homebrew/sbin:$PATH"
 export PATH="/opt/homebrew/opt/mongodb-community@4.4/bin:$PATH"
 
 # Postgres
-export PGDATA=$HOME/Postgres@11
-export PATH="/opt/homebrew/opt/postgresql@11/bin:$PATH"
+export PGDATA=$HOME/Postgres@12
+export PATH="/opt/homebrew/opt/postgresql@12/bin:$PATH"
+
+# asdf
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # History
 export HISTSIZE=1000000
@@ -35,7 +38,7 @@ PROMPT='%F{blue}%2/%F{yellow}${vcs_info_msg_0_} > %F{reset}'
 
 # PYTHON
 export PATH="/opt/homebrew/opt/python@3.11/libexec/bin:$PATH"
- 
+
 # -----------------------------------------------------------------------------
 # AI-powered Git Commit Function
 # Copy paste this gist into your ~/.bashrc or ~/.zshrc to gain the `gcm` command. It:
@@ -125,9 +128,6 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:descriptions' format '[%d]'
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 export PATH="/opt/homebrew/opt/ansible@8/bin:$PATH"
-export PATH="/opt/homebrew/opt/postgresql@11/bin:$PATH"
-
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -147,3 +147,4 @@ unset __conda_setup
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH="/opt/homebrew/opt/ansible@9/bin:$PATH"
