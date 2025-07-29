@@ -25,6 +25,18 @@ require('lazy').setup({
     },
 
     {
+        "CopilotC-Nvim/CopilotChat.nvim",
+        dependencies = {
+            { "zbirenbaum/copilot.lua" },
+            { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+        },
+        build = "make tiktoken",
+        opts = {
+        },
+        -- See Commands section for default commands if you want to lazy load on them
+    },
+
+    {
         'L3MON4D3/LuaSnip',
         dependencies = { "rafamadriz/friendly-snippets" }
     },

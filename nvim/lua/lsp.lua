@@ -1,6 +1,3 @@
-require("mason").setup()
-require("mason-lspconfig").setup()
-
 local lsp_cmds = vim.api.nvim_create_augroup('lsp_cmds', { clear = true })
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -31,9 +28,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
         bufmap('n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<cr>')
         bufmap('x', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<cr>')
-
-        -- if using Neovim v0.8 uncomment this
-        -- bufmap('x', '<F4>', '<cmd>lua vim.lsp.buf.range_code_action()<cr>')
     end
 })
 
