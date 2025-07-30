@@ -1,6 +1,9 @@
 # Prerequisites:
 # brew install fzf
 
+# used to store sensitive information
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
 export CLICOLOR=1
 export EDITOR="nvim"
 

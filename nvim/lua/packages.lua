@@ -8,32 +8,70 @@ require('lazy').setup({
     'tpope/vim-unimpaired',
     'tpope/vim-repeat',
 
+    -- Check https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua for more settings
+    {
+        "yetone/avante.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+            "hrsh7th/nvim-cmp",
+            "ibhagwan/fzf-lua",
+            "zbirenbaum/copilot.lua",
+        },
+        opts = {
+            provider = "openai",
+            providers = {
+                openai = {
+                    endpoint = "https://api.openai.com/v1",
+                    model = "gpt-4o",
+                    timeout = 30000,
+                    context_window = 128000,
+                    extra_request_body = {
+                        temperature = 0.75,
+                        max_completion_tokens = 16384,
+                        reasoning_effort = "medium",
+                    },
+                },
+            }
+        },
+    },
+
+    {
+        "ibhagwan/fzf-lua",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        cmd = "FzfLua",
+        opts = {
+            winopts = {
+                height = 0.85,
+                width = 0.85,
+            },
+        },
+    },
+
     {
         "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
         event = "InsertEnter",
-        config = function()
-            require("copilot").setup({})
-        end
-    },
-
-    {
-        "zbirenbaum/copilot-cmp",
-        config = function()
-            require("copilot_cmp").setup()
-        end
-    },
-
-    {
-        "CopilotC-Nvim/CopilotChat.nvim",
-        dependencies = {
-            { "zbirenbaum/copilot.lua" },
-            { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
-        },
-        build = "make tiktoken",
         opts = {
+            panel = { enabled = false },
+            suggestion = {
+                enabled = true,
+                auto_trigger = true,
+                keymap = {
+                    accept = "<C-l>",
+                    next = "<C-n>",
+                    prev = "<C-p>",
+                    dismiss = "<C-h>",
+                },
+            },
+            filetypes = {
+                markdown = true,
+                gitcommit = true,
+                help = false,
+            },
         },
-        -- See Commands section for default commands if you want to lazy load on them
+        config = function(_, opts)
+            require("copilot").setup(opts)
+        end,
     },
 
     {
