@@ -19,6 +19,9 @@ require('lazy').setup({
             "zbirenbaum/copilot.lua",
         },
         opts = {
+            selector = {
+                provider = "fzf_lua",
+            },
             provider = "openai",
             providers = {
                 openai = {
@@ -95,8 +98,8 @@ require('lazy').setup({
     {
         'preservim/vimux',
         config = function()
-            vim.cmd [[let g:VimuxOrientation = "h"]]
-            vim.cmd [[let g:VimuxHeight = "35%"]]
+            vim.cmd [[let g:VimuxOrientation = "v"]]
+            vim.cmd [[let g:VimuxHeight = "15%"]]
             vim.cmd [[let g:VimuxCloseOnExit = 1]]
             vim.cmd [[let g:VimuxUseNearest = 0]]
         end
