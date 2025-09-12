@@ -7,7 +7,27 @@ require('lazy').setup({
     'tpope/vim-surround',
     'tpope/vim-unimpaired',
     'tpope/vim-repeat',
-
+    {
+        "stevearc/conform.nvim",
+        event = { "BufReadPre", "BufNewFile" },
+        config = function()
+            require("conform").setup({
+                formatters_by_ft = {
+                    javascript = { "prettierd", "prettier" },
+                    typescript = { "prettierd", "prettier" },
+                    javascriptreact = { "prettierd", "prettier" },
+                    typescriptreact = { "prettierd", "prettier" },
+                    json = { "prettierd", "prettier" },
+                    css = { "prettierd", "prettier" },
+                    scss = { "prettierd", "prettier" },
+                    markdown = { "prettierd", "prettier" },
+                    yaml = { "prettierd", "prettier" },
+                },
+                -- don’t fall back to LSP; we want Prettier only
+                format_on_save = false,
+            })
+        end,
+    },
     -- Check https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua for more settings
     {
         "yetone/avante.nvim",
@@ -16,27 +36,39 @@ require('lazy').setup({
             "MunifTanjim/nui.nvim",
             "hrsh7th/nvim-cmp",
             "ibhagwan/fzf-lua",
-            "zbirenbaum/copilot.lua",
         },
         opts = {
             selector = {
                 provider = "fzf_lua",
             },
-            provider = "openai",
-            providers = {
-                openai = {
-                    endpoint = "https://api.openai.com/v1",
-                    model = "gpt-4o",
-                    timeout = 30000,
-                    context_window = 128000,
-                    extra_request_body = {
-                        temperature = 0.75,
-                        max_completion_tokens = 16384,
-                        reasoning_effort = "medium",
-                    },
-                },
-            }
+            provider = "copilot",
         },
+    },
+
+    {
+        "zbirenbaum/copilot.lua",
+        event = "InsertEnter",
+        opts = {
+            panel = { enabled = false },
+            suggestion = {
+                enabled = true,
+                auto_trigger = true,
+                keymap = {
+                    accept = "<C-l>",
+                    next = "<C-n>",
+                    prev = "<C-p>",
+                    dismiss = "<C-h>",
+                },
+            },
+            filetypes = {
+                markdown = true,
+                gitcommit = true,
+                help = false,
+            },
+        },
+        config = function(_, opts)
+            require("copilot").setup(opts)
+        end,
     },
 
     {
