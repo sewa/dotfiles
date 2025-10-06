@@ -1,74 +1,103 @@
+---------------------------------------------------------------------
+-- LSP keymaps (buffer-local on attach)
+---------------------------------------------------------------------
 local lsp_cmds = vim.api.nvim_create_augroup('lsp_cmds', { clear = true })
 
 vim.api.nvim_create_autocmd('LspAttach', {
-  group = lsp_cmds,
-  desc = 'LSP actions',
-  callback = function(args)
-    local buf = args.buf
-    local bufmap = function(mode, lhs, rhs)
-      vim.keymap.set(mode, lhs, rhs, { buffer = buf })
-    end
+    group = lsp_cmds,
+    desc = 'LSP actions',
+    callback = function(args)
+        local buf = args.buf
+        local bufmap = function(mode, lhs, rhs, desc)
+            vim.keymap.set(mode, lhs, rhs, { buffer = buf, silent = true, desc = desc })
+        end
 
-    bufmap('n', '<Leader>lh', '<cmd>lua vim.lsp.buf.hover()<cr>')
-    bufmap('n', '<Leader>lg', '<cmd>lua vim.lsp.buf.definition()<cr>')
-    bufmap('n', '<leader>lR', ':FzfLua lsp_references<cr>')
-    bufmap('n', '<Leader>lG', '<cmd>lua vim.lsp.buf.declaration()<cr>')
-    bufmap('n', '<Leader>li', '<cmd>lua vim.lsp.buf.implementation()<cr>')
-    bufmap('n', '<Leader>lt', '<cmd>lua vim.lsp.buf.type_definition()<cr>')
-    bufmap('n', '<Leader>lr', '<cmd>lua vim.lsp.buf.rename()<cr>')
-    bufmap('n', '<Leader>lH', '<cmd>lua vim.lsp.buf.signature_help()<cr>')
-    bufmap('n', '<leader>lwl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>')
-    bufmap('n', '<leader>lwa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>')
-    bufmap('n', '<leader>lwr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>')
-    bufmap('n', '<leader>lws', ':FzfLua lsp_live_workspace_symbols<cr>')
+        -- Prefer function refs over <cmd>lua ...<cr>
+        bufmap('n', '<Leader>lh', vim.lsp.buf.hover, 'Hover')
+        bufmap('n', '<Leader>lg', vim.lsp.buf.definition, 'Go to definition')
+        bufmap('n', '<Leader>lG', vim.lsp.buf.declaration, 'Go to declaration')
+        bufmap('n', '<Leader>li', vim.lsp.buf.implementation, 'Go to implementation')
+        bufmap('n', '<Leader>lt', vim.lsp.buf.type_definition, 'Type definition')
+        bufmap('n', '<Leader>lr', vim.lsp.buf.rename, 'Rename symbol')
+        bufmap('n', '<Leader>lH', vim.lsp.buf.signature_help, 'Signature help')
 
-    bufmap('n', '<Leader>lo', '<cmd>lua vim.diagnostic.open_float()<cr>')
-    bufmap('n', '<Leader>lp', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
-    bufmap('n', '<Leader>ln', '<cmd>lua vim.diagnostic.goto_next()<cr>')
+        bufmap('n', '<leader>lwl', function()
+            print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+        end, 'List workspace folders')
+        bufmap('n', '<leader>lwa', vim.lsp.buf.add_workspace_folder, 'Add workspace folder')
+        bufmap('n', '<leader>lwr', vim.lsp.buf.remove_workspace_folder, 'Remove workspace folder')
 
-    bufmap('n', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<cr>')
-    bufmap('x', '<leader>la', '<cmd>lua vim.lsp.buf.code_action()<cr>')
+        -- FzfLua integrations (leave as commands)
+        bufmap('n', '<leader>lR', '<cmd>FzfLua lsp_references<cr>', 'References')
+        bufmap('n', '<leader>lws', '<cmd>FzfLua lsp_live_workspace_symbols<cr>', 'Workspace symbols')
 
-    bufmap('n', '<Leader>lf', function()
-      require('conform').format({ async = true, lsp_fallback = false })
-    end)
-  end
+        -- Diagnostics
+        bufmap('n', '<Leader>lo', function()
+            vim.diagnostic.open_float(nil, { border = "rounded", focus = false, source = "if_many" })
+        end, 'Line diagnostics')
+        bufmap('n', '<Leader>lp', vim.diagnostic.goto_prev, 'Prev diagnostic')
+        bufmap('n', '<Leader>ln', vim.diagnostic.goto_next, 'Next diagnostic')
+
+        -- Code actions
+        bufmap('n', '<leader>la', vim.lsp.buf.code_action, 'Code action')
+        bufmap('x', '<leader>la', vim.lsp.buf.code_action, 'Range code action')
+
+        -- Format: prefer Conform for web-ish filetypes, fallback to LSP
+        bufmap('n', '<Leader>lf', function()
+            local ok, conform = pcall(require, 'conform')
+            if ok then
+                local ft = vim.bo.filetype
+                local webby = {
+                    javascript = true,
+                    javascriptreact = true,
+                    typescript = true,
+                    typescriptreact = true,
+                    json = true,
+                    css = true,
+                    scss = true,
+                    markdown = true,
+                    yaml = true,
+                }
+                if webby[ft] then
+                    return conform.format({ async = true, lsp_fallback = false })
+                end
+            end
+            vim.lsp.buf.format({ async = true }) -- fallback for everything else
+        end, 'Format buffer')
+    end,
 })
 
--- -------------- LSP CAPABILITIES --------------
-local lspconfig = require('lspconfig')
-local lsp_defaults = lspconfig.util.default_config
-lsp_defaults.capabilities = vim.tbl_deep_extend(
-  'force',
-  lsp_defaults.capabilities,
-  require('cmp_nvim_lsp').default_capabilities()
-)
+local cmp_caps = require('cmp_nvim_lsp').default_capabilities()
+if vim.lsp and vim.lsp.config then
+    vim.lsp.config('*', {
+        capabilities = cmp_caps,
+    })
+end
 
--- -------------- DISABLE TSSERVER FORMATTING --------------
-local on_attach = function(client, bufnr)
-  if client.name == 'tsserver' or client.name == 'ts_ls' then
-    client.server_capabilities.documentFormattingProvider = false
-    client.server_capabilities.documentRangeFormattingProvider = false
-  end
+local function on_attach_disable_ts_formatting(client, bufnr)
+    if client.name == 'tsserver' or client.name == 'ts_ls' then
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+    end
+end
+
+if vim.lsp and vim.lsp.config then
+    vim.lsp.config('ts_ls', {
+        on_attach = on_attach_disable_ts_formatting,
+    })
 end
 
 require('mason').setup({})
-require('mason-lspconfig').setup({
-  ensure_installed = {
-    'ts_ls',
-    -- 'eslint',  -- optional, if you also set up eslint LSP
-  }
+
+local mlsp = require('mason-lspconfig')
+
+mlsp.setup({
+    ensure_installed = {
+        'ts_ls',
+    },
+    handlers = {
+        function(server_name)
+            vim.lsp.enable(server_name)
+        end,
+    },
 })
-
-if lspconfig.ts_ls then
-  lspconfig.ts_ls.setup({ on_attach = on_attach })
-end
-
--- -------------- OPTIONAL: ESLINT LSP FOR CODE ACTIONS --------------
--- If you want ESLint fixes via <leader>la:
--- lspconfig.eslint.setup({
---   settings = {
---     format = { enable = false }, -- keep formatting on Conform
---     workingDirectory = { mode = "auto" },
---   },
--- })
