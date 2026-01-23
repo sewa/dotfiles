@@ -31,10 +31,9 @@
 --   <C-l>       Navigate to window on the right
 --
 -- Terminal mode:
---   <Esc>       Single: passes to terminal app (Claude menus, etc.)
---               Double-tap (within 200ms): exits to Neovim normal mode
---   q           Close terminal window (in terminal normal mode)
---   <C-\><C-n>  Exit to normal mode immediately (always works)
+--   <Esc>       Passes to terminal app (Claude menus, etc.)
+--   <C-\><C-n>  Exit to normal mode (auto-returns to insert on cursor move)
+--   q           Close terminal window (press <C-\><C-n> first)
 --
 -- All terminals auto-enter insert mode when focused.
 -- Windows auto-close when the terminal process exits.
@@ -364,6 +363,26 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
     end,
 })
 
+-- Force insert mode on any cursor movement in terminal buffers
+-- This catches mouse clicks and accidental escapes
+vim.api.nvim_create_autocmd('TermOpen', {
+    pattern = '*',
+    callback = function()
+        local buf = vim.api.nvim_get_current_buf()
+        vim.api.nvim_create_autocmd('CursorMoved', {
+            buffer = buf,
+            callback = function()
+                -- Defer check until after any pending window navigation completes
+                vim.schedule(function()
+                    if vim.api.nvim_get_current_buf() == buf and vim.bo[buf].buftype == 'terminal' then
+                        vim.cmd('startinsert')
+                    end
+                end)
+            end,
+        })
+    end,
+})
+
 -------------------------------------------------------------------------------
 -- Terminal Navigation (works from both normal and terminal mode)
 -------------------------------------------------------------------------------
@@ -384,34 +403,8 @@ vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', options)
 -- Terminal Mode Convenience
 -------------------------------------------------------------------------------
 
--- Double-tap Escape to exit terminal mode
--- Single Escape passes through to the terminal app (e.g., Claude Code menus)
--- Double Escape (within 200ms) exits to Neovim normal mode
--- <C-\><C-n> always works as immediate escape
-local esc_timer = nil
-local esc_pending = false
-
-vim.keymap.set('t', '<Esc>', function()
-    if esc_pending then
-        -- Second Escape within timeout: exit terminal mode
-        if esc_timer then
-            esc_timer:stop()
-            esc_timer = nil
-        end
-        esc_pending = false
-        return '<C-\\><C-n>'
-    else
-        -- First Escape: start timer and send Escape to terminal
-        esc_pending = true
-        esc_timer = vim.uv.new_timer()
-        esc_timer:start(200, 0, vim.schedule_wrap(function()
-            esc_pending = false
-            esc_timer = nil
-        end))
-        -- Send Escape to the terminal application
-        return '<Esc>'
-    end
-end, { noremap = true, silent = true, expr = true })
+-- Escape passes through to terminal apps (no mapping needed)
+-- Use <C-\><C-n> to exit to normal mode if needed
 
 -- Close terminal window with q in normal mode (when in terminal buffer)
 vim.api.nvim_create_autocmd('TermOpen', {
