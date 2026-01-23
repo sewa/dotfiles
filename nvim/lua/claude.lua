@@ -33,7 +33,11 @@
 -- Terminal mode:
 --   <Esc>       Passes to terminal app (Claude menus, etc.)
 --   <C-\><C-n>  Exit to normal mode (auto-returns to insert on cursor move)
+--   <C-s>       Enter scroll mode (stay in normal mode for scrolling)
 --   q           Close terminal window (press <C-\><C-n> first)
+--
+-- Normal mode (in terminal buffer scroll mode):
+--   i           Exit scroll mode and return to insert
 --
 -- All terminals auto-enter insert mode when focused.
 -- Windows auto-close when the terminal process exits.
@@ -365,13 +369,22 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
 
 -- Force insert mode on any cursor movement in terminal buffers
 -- This catches mouse clicks and accidental escapes
+-- Scroll mode can be enabled per-buffer to temporarily allow normal mode scrolling
 vim.api.nvim_create_autocmd('TermOpen', {
     pattern = '*',
     callback = function()
         local buf = vim.api.nvim_get_current_buf()
+
+        -- Initialize scroll mode as disabled
+        vim.b[buf].terminal_scroll_mode = false
+
         vim.api.nvim_create_autocmd('CursorMoved', {
             buffer = buf,
             callback = function()
+                -- Skip if scroll mode is enabled
+                if vim.b[buf].terminal_scroll_mode then
+                    return
+                end
                 -- Defer check until after any pending window navigation completes
                 vim.schedule(function()
                     if vim.api.nvim_get_current_buf() == buf and vim.bo[buf].buftype == 'terminal' then
@@ -380,6 +393,19 @@ vim.api.nvim_create_autocmd('TermOpen', {
                 end)
             end,
         })
+
+        -- Enter scroll mode: <C-s> in terminal mode
+        vim.keymap.set('t', '<C-s>', function()
+            vim.b[buf].terminal_scroll_mode = true
+            vim.cmd('stopinsert')
+            vim.notify('Scroll mode (press i to exit)', vim.log.levels.INFO)
+        end, { buffer = buf, noremap = true, silent = true, desc = 'Enter scroll mode' })
+
+        -- Exit scroll mode: i in normal mode (for terminal buffers)
+        vim.keymap.set('n', 'i', function()
+            vim.b[buf].terminal_scroll_mode = false
+            vim.cmd('startinsert')
+        end, { buffer = buf, noremap = true, silent = true, desc = 'Exit scroll mode' })
     end,
 })
 
