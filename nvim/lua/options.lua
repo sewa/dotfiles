@@ -2,7 +2,7 @@ local opt = vim.opt
 
 -- Files
 opt.swapfile      = true
-opt.dir           = '/tmp'
+opt.directory     = vim.fn.stdpath('state') .. '/swap//'
 opt.hidden        = true
 
 -- Search
@@ -16,7 +16,6 @@ opt.mouse         = 'a'
 
 --Editing
 opt.showmatch     = true
-opt.mat           = 2
 opt.scrolloff     = 12
 opt.history       = 500
 opt.timeoutlen    = 500
@@ -46,7 +45,6 @@ opt.expandtab      = true
 opt.smarttab       = true
 opt.autoindent     = true
 opt.smartindent    = true
-opt.wrap           = true
 opt.shiftwidth     = 2
 opt.tabstop        = 2
 opt.softtabstop    = 2

@@ -15,7 +15,7 @@ export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
 
 # Mongodb
-export PATH="/opt/homebrew/opt/mongodb-community@4.4/bin:$PATH"
+export PATH="/opt/homebrew/opt/mongodb-community/bin:$PATH"
 
 # Postgres
 export PGDATA=$HOME/Postgres@12
@@ -28,13 +28,22 @@ export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 export CPPFLAGS="-I/opt/homebrew/opt/openjdk@17/include"
 
 # History
+export HISTFILE=~/.zsh_history
 export HISTSIZE=1000000
 export SAVEHIST=1000000
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_SAVE_NO_DUPS
 setopt HIST_REDUCE_BLANKS
+setopt HIST_IGNORE_SPACE
+setopt HIST_FIND_NO_DUPS
 setopt INC_APPEND_HISTORY_TIME
 setopt EXTENDED_HISTORY
+setopt SHARE_HISTORY
+
+# Shell options
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
 
 # Prompt
 autoload -Uz vcs_info
@@ -45,8 +54,8 @@ precmd() {
 setopt prompt_subst
 PROMPT='%F{blue}%2/%F{yellow}${vcs_info_msg_0_} > %F{reset}'
 
-# PYTHON
-export PATH="/opt/homebrew/opt/python@3.11/libexec/bin:$PATH"
+# Python
+export PATH="/opt/homebrew/opt/python@3/libexec/bin:$PATH"
 
 # -----------------------------------------------------------------------------
 # AI-powered Git Commit Function
@@ -123,8 +132,13 @@ Please generate a concise, one-line commit message for these changes."
         esac
     done
 }
-# Autocompletion
-autoload -Uz compinit && compinit
+# Autocompletion (with caching for faster startup)
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
+    compinit
+else
+    compinit -C
+fi
 source "$HOME/Projects/fzf-tab/fzf-tab.plugin.zsh"
 
 # FZF
@@ -132,14 +146,13 @@ source "$HOME/Projects/fzf-tab/fzf-tab.plugin.zsh"
 
 zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:*' fzf-bindings 'space:accept'
-
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*:descriptions' format '[%d]'
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export PATH="/opt/homebrew/opt/ansible@8/bin:$PATH"
 
+# Android
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
-export PATH="/opt/homebrew/opt/ansible@9/bin:$PATH"
+
+# Java
 export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"

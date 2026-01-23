@@ -19,6 +19,7 @@ Personal dotfiles repository for macOS development environment. Manages configur
 - `karabiner/` - Keyboard customization for macOS
 - `.zshrc` - Shell configuration with AI-powered git commit (`gcm`)
 - `.tmux.conf` - Tmux with vim keybindings, prefix: `C-space`
+- `.gitconfig` - Git config with aliases (st, co, br, ci, graph)
 
 ## Neovim Architecture
 
@@ -56,6 +57,14 @@ brew install --cask font-sauce-code-pro-nerd-font
 # AI commit messages (for gcm function)
 # https://llm.datasette.io/en/stable/
 ```
+
+## Tmux Keybindings (prefix: C-space)
+
+- `v` - Vertical split (current path)
+- `s` - Horizontal split (current path)
+- `h/j/k/l` - Pane navigation
+- `H/J/K/L` - Pane resize
+- `r` - Reload config
 
 ## Shell Commands
 

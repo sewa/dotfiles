@@ -1,6 +1,6 @@
 [user]
-name = Severin Schwanck
-email = schwanck@promptus-partners.de
+	name = Severin Schwanck
+	email = schwanck@promptus-partners.de
 [core]
 	editor = nvim
 	excludesfile = ~/.gitignore
@@ -8,3 +8,20 @@ email = schwanck@promptus-partners.de
 	rebase = false
 [push]
 	autoSetupRemote = true
+[fetch]
+	prune = true
+[rebase]
+	autostash = true
+[diff]
+	algorithm = histogram
+	colorMoved = default
+[merge]
+	conflictstyle = zdiff3
+[alias]
+	st = status
+	co = checkout
+	br = branch
+	ci = commit
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	graph = log --graph --oneline --all
