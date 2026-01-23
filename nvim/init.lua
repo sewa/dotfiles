@@ -10,7 +10,7 @@
 -- brew install delta
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -31,13 +31,47 @@ require'options'
 require'keymap'
 require'claude'
 
-vim.cmd[[filetype plugin on]]
-vim.cmd[[filetype indent on]]
+vim.cmd.filetype('plugin on')
+vim.cmd.filetype('indent on')
 
-vim.cmd[[autocmd BufWritePre * :%s/\s\+$//e]]
-vim.cmd[[autocmd FileType lua setlocal shiftwidth=4 softtabstop=4 tabstop=8]]
-vim.cmd[[autocmd BufRead,BufNewFile *.kbd set filetype=kbd]]
+-- Strip trailing whitespace on save
+vim.api.nvim_create_autocmd('BufWritePre', {
+    pattern = '*',
+    callback = function()
+        local save_cursor = vim.fn.getpos('.')
+        vim.cmd([[%s/\s\+$//e]])
+        vim.fn.setpos('.', save_cursor)
+    end,
+})
 
-vim.cmd[[au BufRead,BufNewFile *.ex,*.exs set filetype=elixir]]
-vim.cmd[[au BufRead,BufNewFile *.eex,*.heex,*.leex,*.sface,*.lexs set filetype=eelixir]]
-vim.cmd[[au BufRead,BufNewFile mix.lock set filetype=elixir]]
+-- Lua-specific indentation
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'lua',
+    callback = function()
+        vim.opt_local.shiftwidth = 4
+        vim.opt_local.softtabstop = 4
+        vim.opt_local.tabstop = 8
+    end,
+})
+
+-- Custom filetypes
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+    pattern = '*.kbd',
+    callback = function()
+        vim.bo.filetype = 'kbd'
+    end,
+})
+
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+    pattern = { '*.ex', '*.exs', 'mix.lock' },
+    callback = function()
+        vim.bo.filetype = 'elixir'
+    end,
+})
+
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
+    pattern = { '*.eex', '*.heex', '*.leex', '*.sface', '*.lexs' },
+    callback = function()
+        vim.bo.filetype = 'eelixir'
+    end,
+})

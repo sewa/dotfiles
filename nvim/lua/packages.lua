@@ -2,7 +2,6 @@ require('lazy').setup({
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
-    'vijaymarupudi/nvim-fzf',
     'onsails/lspkind-nvim',
     'tpope/vim-surround',
     'tpope/vim-unimpaired',
@@ -59,37 +58,18 @@ require('lazy').setup({
         "ibhagwan/fzf-lua",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         cmd = "FzfLua",
-        opts = {
-            winopts = {
-                height = 0.85,
-                width = 0.85,
-            },
-        },
-    },
-
-    {
-        "zbirenbaum/copilot.lua",
-        event = "InsertEnter",
-        opts = {
-            panel = { enabled = false },
-            suggestion = {
-                enabled = true,
-                auto_trigger = true,
-                keymap = {
-                    accept = "<C-l>",
-                    next = "<C-n>",
-                    prev = "<C-p>",
-                    dismiss = "<C-h>",
+        config = function()
+            require('fzf-lua').setup({
+                winopts = {
+                    height = 0.95,
+                    width = 0.95,
+                    border = true,
+                    preview = {
+                        horizontal = 'right:50%',
+                        flip_columns = 200,
+                    },
                 },
-            },
-            filetypes = {
-                markdown = true,
-                gitcommit = true,
-                help = false,
-            },
-        },
-        config = function(_, opts)
-            require("copilot").setup(opts)
+            })
         end,
     },
 
@@ -141,23 +121,6 @@ require('lazy').setup({
         'folke/which-key.nvim',
         config = function()
             require 'which-key'.setup {}
-        end
-    },
-
-    {
-        'ibhagwan/fzf-lua',
-        config = function()
-            require 'fzf-lua'.setup {
-                winopts = {
-                    preview = {
-                        horizontal = 'right:50%',
-                        flip_columns = 200,
-                    },
-                    height = 0.95,
-                    width = 0.95,
-                    border = true,
-                }
-            }
         end
     },
 
@@ -432,7 +395,6 @@ require('lazy').setup({
                     end, { 'i', 's' }),
                 },
                 sources = {
-                    { name = 'copilot' },
                     { name = 'luasnip' },
                     { name = 'nvim_lsp' },
                     { name = 'buffer' }
