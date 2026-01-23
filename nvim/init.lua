@@ -29,6 +29,7 @@ require'packages'
 require'lsp'
 require'options'
 require'keymap'
+require'claude'
 
 vim.cmd[[filetype plugin on]]
 vim.cmd[[filetype indent on]]

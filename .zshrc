@@ -24,6 +24,9 @@ export PATH="/opt/homebrew/opt/postgresql@12/bin:$PATH"
 # asdf
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
+# jdk
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk@17/include"
+
 # History
 export HISTSIZE=1000000
 export SAVEHIST=1000000
@@ -139,3 +142,4 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH="/opt/homebrew/opt/ansible@9/bin:$PATH"
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"

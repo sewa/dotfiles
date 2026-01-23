@@ -28,22 +28,6 @@ require('lazy').setup({
             })
         end,
     },
-    -- Check https://github.com/yetone/avante.nvim/blob/main/lua/avante/config.lua for more settings
-    {
-        "yetone/avante.nvim",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "MunifTanjim/nui.nvim",
-            "hrsh7th/nvim-cmp",
-            "ibhagwan/fzf-lua",
-        },
-        opts = {
-            selector = {
-                provider = "fzf_lua",
-            },
-            provider = "copilot",
-        },
-    },
 
     {
         "zbirenbaum/copilot.lua",
@@ -128,19 +112,11 @@ require('lazy').setup({
     },
 
     {
-        'preservim/vimux',
-        config = function()
-            vim.cmd [[let g:VimuxOrientation = "v"]]
-            vim.cmd [[let g:VimuxHeight = "15%"]]
-            vim.cmd [[let g:VimuxCloseOnExit = 1]]
-            vim.cmd [[let g:VimuxUseNearest = 0]]
-        end
-    },
-
-    {
         'vim-test/vim-test',
         config = function()
-            vim.cmd [[let test#strategy = "vimux"]]
+            vim.cmd [[let test#strategy = "neovim"]]
+            vim.cmd [[let test#neovim#term_position = "botright 15"]]
+            vim.cmd [[let test#neovim#start_normal = 1]]
             vim.cmd [[let test#ruby#use_spring_binstub = 1]]
         end
     },
@@ -212,6 +188,107 @@ require('lazy').setup({
         config = function()
             require('gitsigns').setup()
         end
+    },
+
+    {
+        "axkirillov/unified.nvim",
+        event = "VeryLazy",
+        opts = {
+            -- you can add options here if needed
+            -- e.g. always_fold = true,
+        },
+        keys = function()
+            -- state shared between keypresses
+            local state = {
+                unified_active = false,
+                nvimtree_was_open = false,
+            }
+
+            local function toggle_unified_with_nvimtree()
+                -- try to get nvim-tree view module (don’t hard-depend on it)
+                local has_nvimtree, view = pcall(require, "nvim-tree.view")
+
+                if not state.unified_active then
+                    -- activating unified.nvim
+                    if has_nvimtree then
+                        state.nvimtree_was_open = view.is_visible()
+                        if state.nvimtree_was_open then
+                            vim.cmd("NvimTreeClose")
+                        end
+                    end
+
+                    -- toggle unified on
+                    require("unified").toggle()
+                    state.unified_active = true
+                else
+                    -- deactivating unified.nvim
+                    require("unified").toggle()
+
+                    -- restore nvim-tree if it was open before
+                    if has_nvimtree and state.nvimtree_was_open then
+                        vim.cmd("NvimTreeOpen")
+                    end
+
+                    state.unified_active = false
+                    state.nvimtree_was_open = false
+                end
+            end
+
+            return {
+                {
+                    "<leader>gd",
+                    toggle_unified_with_nvimtree,
+                    desc = "Git diff (unified, smart with nvim-tree)",
+                    mode = "n",
+                    silent = true,
+                },
+                -- Toggle inline diff for current file vs HEAD
+                {
+                    "<leader>gd",
+                    function()
+                        require("unified").toggle()
+                    end,
+                    desc = "Git Diff (inline unified diff)",
+                },
+
+                -- OPTIONAL: Show inline diff against a specific commit
+                {
+                    "<leader>gD",
+                    function()
+                        vim.ui.input({ prompt = "Diff against commit: " }, function(commit)
+                            if commit and commit ~= "" then
+                                require("unified").open({ commit = commit })
+                            end
+                        end)
+                    end,
+                    desc = "Git Diff against commit",
+                },
+
+                -- OPTIONAL: Refresh the diff when working on big files
+                {
+                    "<leader>gr",
+                    function()
+                        require("unified").refresh()
+                    end,
+                    desc = "Refresh unified diff",
+                },
+
+                -- OPTIONAL: Open a file-pair diff (not just buffer vs HEAD)
+                {
+                    "<leader>gF",
+                    function()
+                        vim.ui.input({ prompt = "File A: " }, function(a)
+                            if not a then return end
+                            vim.ui.input({ prompt = "File B: " }, function(b)
+                                if not b then return end
+                                require("unified").open({ file1 = a, file2 = b })
+                            end)
+                        end)
+                    end,
+                    desc = "Unified diff: file A vs file B",
+                },
+            }
+        end,
     },
 
     {

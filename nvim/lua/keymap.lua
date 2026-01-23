@@ -58,15 +58,6 @@ vim.keymap.set("n", "<leader>xx", "<cmd>Trouble<cr>", options)
 vim.keymap.set("n", "<leader>xw", "<cmd>FzfLua diagnostics_workspace<cr>", options)
 vim.keymap.set("n", "<leader>xd", "<cmd>Trouble diagnostics focus=false filter.buf=0<cr>", options)
 
--- Tmux Keymaps
--- Integration with Tmux for session management
-vim.keymap.set("n", "<Leader>mo", "<cmd>VimuxOpenRunner<cr>", options)
-vim.keymap.set("n", "<Leader>md", "<cmd>VimuxCloseRunner<cr>", options)
-vim.keymap.set("n", "<Leader>mt", "<cmd>VimuxTogglePane<cr>", options)
-vim.keymap.set("n", "<Leader>mi", "<cmd>VimuxInspectRunner<cr>", options)
-vim.keymap.set("n", "<Leader>mz", "<cmd>VimuxZoomRunner<cr>", options)
-vim.keymap.set("n", "<Leader>mc", "<cmd>VimuxPromptCommand('bin/rails c')<cr>", options)
-
 -- Test Keymaps
 -- Testing commands for running test suites
 vim.keymap.set("n", "<leader>ta", "<cmd>TestSuite<cr>", options)
