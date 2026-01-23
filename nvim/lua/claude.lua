@@ -31,9 +31,10 @@
 --   <C-l>       Navigate to window on the right
 --
 -- Terminal mode:
---   <Esc>       Exit to normal mode (double-tap for apps that use Esc)
+--   <Esc>       Single: passes to terminal app (Claude menus, etc.)
+--               Double-tap (within 200ms): exits to Neovim normal mode
 --   q           Close terminal window (in terminal normal mode)
---   <C-\><C-n>  Exit to normal mode (default vim binding, always works)
+--   <C-\><C-n>  Exit to normal mode immediately (always works)
 --
 -- All terminals auto-enter insert mode when focused.
 -- Windows auto-close when the terminal process exits.
@@ -383,9 +384,34 @@ vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', options)
 -- Terminal Mode Convenience
 -------------------------------------------------------------------------------
 
--- Escape to normal mode in terminal (single Esc with slight delay)
--- Use <C-\><C-n> if you need immediate escape (e.g., in vim-in-terminal)
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', options)
+-- Double-tap Escape to exit terminal mode
+-- Single Escape passes through to the terminal app (e.g., Claude Code menus)
+-- Double Escape (within 200ms) exits to Neovim normal mode
+-- <C-\><C-n> always works as immediate escape
+local esc_timer = nil
+local esc_pending = false
+
+vim.keymap.set('t', '<Esc>', function()
+    if esc_pending then
+        -- Second Escape within timeout: exit terminal mode
+        if esc_timer then
+            esc_timer:stop()
+            esc_timer = nil
+        end
+        esc_pending = false
+        return '<C-\\><C-n>'
+    else
+        -- First Escape: start timer and send Escape to terminal
+        esc_pending = true
+        esc_timer = vim.uv.new_timer()
+        esc_timer:start(200, 0, vim.schedule_wrap(function()
+            esc_pending = false
+            esc_timer = nil
+        end))
+        -- Send Escape to the terminal application
+        return '<Esc>'
+    end
+end, { noremap = true, silent = true, expr = true })
 
 -- Close terminal window with q in normal mode (when in terminal buffer)
 vim.api.nvim_create_autocmd('TermOpen', {
