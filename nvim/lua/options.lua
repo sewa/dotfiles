@@ -1,53 +1,60 @@
 local opt = vim.opt
 
 -- Files
-opt.swapfile      = true
-opt.directory     = vim.fn.stdpath('state') .. '/swap//'
-opt.hidden        = true
+opt.swapfile  = true
+opt.directory = vim.fn.stdpath('state') .. '/swap//'
+opt.undofile  = true
 
 -- Search
-opt.hlsearch      = false
-opt.incsearch     = true
-opt.inccommand    = 'split'
-opt.ignorecase    = true
-opt.smartcase     = true
+opt.hlsearch   = false
+opt.incsearch  = true
+opt.inccommand = 'split'
+opt.ignorecase = true
+opt.smartcase  = true
 
-opt.mouse         = 'a'
+-- Mouse
+opt.mouse = 'a'
 
---Editing
-opt.showmatch     = true
+-- Editing
 opt.scrolloff     = 12
 opt.history       = 500
 opt.timeoutlen    = 500
-opt.autoread      = true
-opt.lazyredraw    = true
-opt.magic         = true
+opt.updatetime    = 250
 opt.clipboard     = 'unnamedplus'
 opt.completeopt   = 'menuone,noinsert,noselect'
 opt.splitbelow    = true
 opt.splitright    = true
 opt.termguicolors = true
 opt.background    = 'dark'
-opt.wildmode      = "longest"
-opt.wildmenu      = true
-opt.undofile      = true
+opt.wildmode      = 'longest'
+opt.confirm       = true
+opt.virtualedit   = 'block'
+opt.smoothscroll  = true
+
+-- UI
+opt.cursorline    = true
 opt.list          = true
+opt.listchars     = { tab = '» ', trail = '·', nbsp = '␣' }
+opt.fillchars     = { eob = ' ' }
+opt.pumheight     = 15
+opt.shortmess:append('cWsI')
 
 -- Margin
-opt.foldcolumn     = "2"
+opt.foldcolumn     = '0'
 opt.number         = true
 opt.relativenumber = false
 opt.wrap           = false
 opt.signcolumn     = 'yes'
 
 -- Indent
-opt.expandtab      = true
-opt.smarttab       = true
-opt.autoindent     = true
-opt.smartindent    = true
-opt.shiftwidth     = 2
-opt.tabstop        = 2
-opt.softtabstop    = 2
+opt.expandtab   = true
+opt.smarttab    = true
+opt.autoindent  = true
+opt.smartindent = true
+opt.shiftwidth  = 2
+opt.tabstop     = 2
+opt.softtabstop = 2
 
-opt.switchbuf      = "useopen"
-opt.cmdheight      = 0
+-- Command line
+opt.cmdheight  = 0
+opt.switchbuf  = 'useopen'
