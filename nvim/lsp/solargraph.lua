@@ -1,5 +1,5 @@
 return {
-    cmd = { "bundle exec solargraph" },
+    cmd = { "bundle", "exec", "solargraph", "stdio" },
     settings = {
         solargraph = {
             autoformat = true,

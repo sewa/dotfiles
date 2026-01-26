@@ -3,6 +3,17 @@ require('lazy').setup({
     'williamboman/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
     'onsails/lspkind-nvim',
+    {
+        "OlegGulevskyy/better-ts-errors.nvim",
+        dependencies = { "MunifTanjim/nui.nvim" },
+        ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+        opts = {
+            keymaps = {
+                toggle = "<leader>le",
+                go_to_definition = "<leader>ld",
+            },
+        },
+    },
     'tpope/vim-surround',
     'tpope/vim-unimpaired',
     'tpope/vim-repeat',
