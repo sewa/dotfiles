@@ -74,7 +74,7 @@ local zoom_state = {
 
 -- Configuration
 local config = {
-    claude_width_percent = 0.4,
+    claude_width_percent = 0.5,
     shell_height = 15,
 }
 
