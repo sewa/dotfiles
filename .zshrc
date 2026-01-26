@@ -58,22 +58,26 @@ PROMPT='%F{blue}%2/%F{yellow}${vcs_info_msg_0_} > %F{reset}'
 export PATH="/opt/homebrew/opt/python@3/libexec/bin:$PATH"
 
 # -----------------------------------------------------------------------------
-# AI-powered Git Commit Function
-# Copy paste this gist into your ~/.bashrc or ~/.zshrc to gain the `gcm` command. It:
+# AI-powered Git Commit Function using Claude Code
 # 1) gets the current staged changed diff
-# 2) sends them to an LLM to write the git commit message
+# 2) sends them to Claude to write the git commit message
 # 3) allows you to easily accept, edit, regenerate, cancel
-# But - just read and edit the code however you like
-# the `llm` CLI util is awesome, can get it here: https://llm.datasette.io/en/stable/
 gcm() {
+    # Check for staged changes
+    if git diff --cached --quiet; then
+        echo "No staged changes to commit."
+        return 1
+    fi
+
+    # Check claude is available
+    if ! command -v claude &> /dev/null; then
+        echo "Error: 'claude' CLI not found."
+        return 1
+    fi
+
     # Function to generate commit message
     generate_commit_message() {
-        git diff --cached | llm "
-Below is a diff of all staged changes, coming from the command:
-\`\`\`
-git diff --cached
-\`\`\`
-Please generate a concise, one-line commit message for these changes."
+        git diff --cached | claude -p "Generate a commit message for this diff. Use conventional commit format (feat:, fix:, docs:, refactor:, test:, chore:). Keep the first line under 72 characters. Be specific. Output only the commit message, nothing else."
     }
 
     # Function to read user input compatibly with both Bash and Zsh
@@ -86,8 +90,13 @@ Please generate a concise, one-line commit message for these changes."
         fi
     }
 
+    # Show staged files
+    echo "Staged files:"
+    git diff --cached --name-status
+    echo ""
+
     # Main script
-    echo "Generating AI-powered commit message..."
+    echo "Generating commit message..."
     commit_message=$(generate_commit_message)
 
     while true; do

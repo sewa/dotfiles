@@ -55,7 +55,7 @@ brew tap homebrew/cask-fonts
 brew install --cask font-sauce-code-pro-nerd-font
 
 # AI commit messages (for gcm function)
-# https://llm.datasette.io/en/stable/
+# Requires Claude Code CLI: https://docs.anthropic.com/en/docs/claude-code
 ```
 
 ## Tmux Keybindings (prefix: C-space)
@@ -68,4 +68,4 @@ brew install --cask font-sauce-code-pro-nerd-font
 
 ## Shell Commands
 
-- `gcm` - AI-powered git commit message generator using `llm` CLI
+- `gcm` - AI-powered git commit message generator using Claude Code CLI
