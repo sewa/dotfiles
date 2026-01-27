@@ -25,6 +25,7 @@
 --   <leader>mt  Toggle shell terminal
 --   <leader>mz  Zoom/unzoom AI terminal (full screen toggle)
 --   <leader>ms  Send visual selection to current AI terminal with file context
+--   <leader>mr  Send visual selection to other AI terminal (relay)
 --
 -- Window navigation (works in normal and terminal mode):
 --   <C-h>       Navigate to window on the left
@@ -340,6 +341,60 @@ local function send_to_ai_terminal()
     end
 end
 
+-- Send visual selection to the OTHER AI terminal (relay between AI tools)
+local function send_to_other_ai_terminal()
+    local selection = get_visual_selection()
+    if selection == '' then
+        vim.notify('No selection', vim.log.levels.WARN)
+        return
+    end
+
+    -- Determine which terminal is "other"
+    local current_buf = vim.api.nvim_get_current_buf()
+    local other_idx = nil
+
+    -- If current buffer is an AI terminal, pick the other one
+    for i, ai in ipairs(ai_terminals) do
+        if ai_bufs[ai.name] == current_buf then
+            -- Current buffer is terminal i, so pick the other
+            other_idx = (i % #ai_terminals) + 1
+            break
+        end
+    end
+
+    -- If not in an AI terminal buffer, pick whichever is NOT current
+    if not other_idx then
+        other_idx = (ai_current % #ai_terminals) + 1
+    end
+
+    local other = ai_terminals[other_idx]
+    local buf = ai_bufs[other.name]
+
+    -- Ensure the other terminal exists
+    if not buf or not vim.api.nvim_buf_is_valid(buf) then
+        -- Save state, cycle to create it, then cycle back
+        local prev_current = ai_current
+        ai_current = other_idx
+        open_ai_terminal()
+        buf = ai_bufs[other.name]
+        -- Cycle back and restore previous window
+        ai_current = prev_current
+        if ai_win and vim.api.nvim_win_is_valid(ai_win) then
+            local prev_buf = ai_bufs[current_ai().name]
+            if prev_buf and vim.api.nvim_buf_is_valid(prev_buf) then
+                vim.api.nvim_win_set_buf(ai_win, prev_buf)
+            end
+        end
+    end
+
+    if buf and vim.api.nvim_buf_is_valid(buf) then
+        vim.api.nvim_chan_send(vim.bo[buf].channel, selection)
+        vim.notify('Sent to ' .. other.name, vim.log.levels.INFO)
+    else
+        vim.notify('Failed to open ' .. other.name, vim.log.levels.ERROR)
+    end
+end
+
 -------------------------------------------------------------------------------
 -- Shell Terminal
 -------------------------------------------------------------------------------
@@ -417,6 +472,7 @@ M.focus = focus_ai_terminal
 M.cycle = cycle_ai_terminal
 M.zoom = zoom_ai_terminal
 M.send = send_to_ai_terminal
+M.relay = send_to_other_ai_terminal
 M.open_shell = open_shell
 M.close_shell = close_shell
 M.toggle_shell = toggle_shell
@@ -435,6 +491,7 @@ vim.keymap.set('n', '<leader>mf', focus_ai_terminal, vim.tbl_extend('force', opt
 vim.keymap.set('n', '<leader>mz', zoom_ai_terminal, vim.tbl_extend('force', options, { desc = 'Zoom AI terminal' }))
 vim.keymap.set('n', '<leader>mn', cycle_ai_terminal, vim.tbl_extend('force', options, { desc = 'Cycle to next AI terminal' }))
 vim.keymap.set('v', '<leader>ms', send_to_ai_terminal, vim.tbl_extend('force', options, { desc = 'Send selection to AI terminal' }))
+vim.keymap.set('v', '<leader>mr', send_to_other_ai_terminal, vim.tbl_extend('force', options, { desc = 'Send selection to other AI terminal' }))
 
 -- Shell
 vim.keymap.set('n', '<leader>mt', toggle_shell, vim.tbl_extend('force', options, { desc = 'Toggle shell terminal' }))
