@@ -18,7 +18,7 @@ vim.keymap.set('n', '<leader>pr', '<cmd>NvimTreeRefresh<cr>', opts('Refresh file
 
 -- Comment Keymaps
 vim.keymap.set('n', '<leader>cl', '<cmd>CommentToggle<cr>', opts('Toggle comment'))
-vim.keymap.set('v', '<leader>cl', '<cmd>CommentToggle<cr>', opts('Toggle comment'))
+vim.keymap.set('v', '<leader>cl', ':CommentToggle<cr>', opts('Toggle comment'))
 
 -- File Keymaps
 vim.keymap.set('n', '<leader>fs', '<cmd>w<cr>', opts('Save file'))
