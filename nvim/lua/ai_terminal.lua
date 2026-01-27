@@ -178,10 +178,17 @@ local function open_ai_terminal()
                         vim.api.nvim_buf_delete(ai_bufs[name], { force = true })
                     end
                     ai_bufs[name] = nil
-                    -- If the closed buffer's window is our tracked window, clear it
-                    if ai_win and not vim.api.nvim_win_is_valid(ai_win) then
-                        ai_win = nil
-                        zoom_state.is_zoomed = false
+                    -- Clear tracked window when its terminal buffer exits
+                    if ai_win then
+                        if not vim.api.nvim_win_is_valid(ai_win) then
+                            ai_win = nil
+                            zoom_state.is_zoomed = false
+                        else
+                            -- Window is still valid but no longer has a terminal buffer
+                            vim.api.nvim_win_close(ai_win, true)
+                            ai_win = nil
+                            zoom_state.is_zoomed = false
+                        end
                     end
                 end)
             end,
