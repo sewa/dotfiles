@@ -29,7 +29,7 @@ require'packages'
 require'lsp'
 require'options'
 require'keymap'
-require'claude'
+require'ai_terminal'
 
 vim.cmd.filetype('plugin on')
 vim.cmd.filetype('indent on')

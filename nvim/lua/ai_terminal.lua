@@ -2,10 +2,11 @@
 -- Terminal Management for Neovim
 -------------------------------------------------------------------------------
 --
--- This module provides integrated terminal management with two dedicated
--- terminals:
+-- This module provides integrated terminal management with:
 --
---   1. Claude Code - AI assistant terminal (right side, 40% width)
+--   1. AI Terminal Stack - Multiple AI terminals (Claude, Codex) sharing a
+--      single right-side window. Only one is visible at a time; cycle with
+--      <leader>mn to swap between them.
 --   2. Shell - General purpose terminal (bottom, 15 lines)
 --
 -- Both terminals have $NVIM set automatically, allowing tools like Claude Code
@@ -16,13 +17,14 @@
 -------------------------------------------------------------------------------
 --
 -- Normal mode:
---   <leader>mc  Toggle Claude Code terminal
---   <leader>mo  Open Claude Code terminal
---   <leader>md  Close Claude Code terminal
---   <leader>mf  Focus Claude Code terminal (opens if not exists)
+--   <leader>mc  Toggle AI terminal (current)
+--   <leader>mo  Open AI terminal
+--   <leader>md  Close AI terminal
+--   <leader>mf  Focus AI terminal (opens if not exists)
+--   <leader>mn  Cycle to next AI terminal
 --   <leader>mt  Toggle shell terminal
---   <leader>mz  Zoom/unzoom Claude Code terminal (full screen toggle)
---   <leader>ms  Send visual selection to Claude with file context
+--   <leader>mz  Zoom/unzoom AI terminal (full screen toggle)
+--   <leader>ms  Send visual selection to current AI terminal with file context
 --
 -- Window navigation (works in normal and terminal mode):
 --   <C-h>       Navigate to window on the left
@@ -48,8 +50,8 @@
 --
 --   ┌─────────────────────────┬──────────────────┐
 --   │                         │                  │
---   │                         │   Claude Code    │
---   │      Code Buffer        │   (40% width)    │
+--   │                         │  Claude / Codex  │
+--   │      Code Buffer        │   (50% width)    │
 --   │                         │                  │
 --   │                         │                  │
 --   ├─────────────────────────┴──────────────────┤
@@ -60,9 +62,16 @@
 
 local M = {}
 
--- Terminal state
-local claude_buf = nil
-local claude_win = nil
+-- AI terminal stack
+local ai_terminals = {
+    { name = "Claude", cmd = "claude" },
+    { name = "Codex",  cmd = "codex" },
+}
+local ai_bufs = {}        -- indexed by name
+local ai_win = nil        -- shared window
+local ai_current = 1      -- index into ai_terminals
+
+-- Shell terminal state
 local shell_buf = nil
 local shell_win = nil
 
@@ -115,13 +124,28 @@ local function get_visual_selection()
 end
 
 -------------------------------------------------------------------------------
--- Claude Code Terminal
+-- AI Terminal Stack
 -------------------------------------------------------------------------------
 
-local function open_claude()
+local function current_ai()
+    return ai_terminals[ai_current]
+end
+
+local function current_ai_buf()
+    return ai_bufs[current_ai().name]
+end
+
+local function open_ai_terminal()
+    local ai = current_ai()
+
     -- Focus existing window if valid
-    if claude_win and vim.api.nvim_win_is_valid(claude_win) then
-        vim.api.nvim_set_current_win(claude_win)
+    if ai_win and vim.api.nvim_win_is_valid(ai_win) then
+        -- Swap to current terminal's buffer if needed
+        local buf = ai_bufs[ai.name]
+        if buf and vim.api.nvim_buf_is_valid(buf) then
+            vim.api.nvim_win_set_buf(ai_win, buf)
+        end
+        vim.api.nvim_set_current_win(ai_win)
         vim.cmd('startinsert')
         return
     end
@@ -132,92 +156,142 @@ local function open_claude()
     vim.cmd('vertical resize ' .. width)
 
     -- Reuse existing buffer or create new terminal
-    if claude_buf and vim.api.nvim_buf_is_valid(claude_buf) then
-        vim.api.nvim_set_current_buf(claude_buf)
+    local buf = ai_bufs[ai.name]
+    if buf and vim.api.nvim_buf_is_valid(buf) then
+        vim.api.nvim_set_current_buf(buf)
     else
         -- Start in project root
         local project_root = get_project_root()
         vim.cmd('lcd ' .. vim.fn.fnameescape(project_root))
-        vim.cmd('terminal claude')
-        claude_buf = vim.api.nvim_get_current_buf()
-        vim.bo[claude_buf].buflisted = false
+        vim.cmd('terminal ' .. ai.cmd)
+        buf = vim.api.nvim_get_current_buf()
+        ai_bufs[ai.name] = buf
+        vim.bo[buf].buflisted = false
 
         -- Clean up and auto-close when terminal exits
+        local name = ai.name
         vim.api.nvim_create_autocmd('TermClose', {
-            buffer = claude_buf,
+            buffer = buf,
             callback = function()
-                -- Schedule to avoid issues with closing during event
                 vim.schedule(function()
-                    if claude_buf and vim.api.nvim_buf_is_valid(claude_buf) then
-                        vim.api.nvim_buf_delete(claude_buf, { force = true })
+                    if ai_bufs[name] and vim.api.nvim_buf_is_valid(ai_bufs[name]) then
+                        vim.api.nvim_buf_delete(ai_bufs[name], { force = true })
                     end
-                    claude_buf = nil
-                    claude_win = nil
-                    zoom_state.is_zoomed = false
+                    ai_bufs[name] = nil
+                    -- If the closed buffer's window is our tracked window, clear it
+                    if ai_win and not vim.api.nvim_win_is_valid(ai_win) then
+                        ai_win = nil
+                        zoom_state.is_zoomed = false
+                    end
                 end)
             end,
         })
     end
 
-    claude_win = vim.api.nvim_get_current_win()
+    ai_win = vim.api.nvim_get_current_win()
 
     -- Terminal window options
-    vim.wo[claude_win].number = false
-    vim.wo[claude_win].relativenumber = false
-    vim.wo[claude_win].signcolumn = 'no'
+    vim.wo[ai_win].number = false
+    vim.wo[ai_win].relativenumber = false
+    vim.wo[ai_win].signcolumn = 'no'
 
     vim.cmd('startinsert')
 end
 
-local function close_claude()
-    if claude_win and vim.api.nvim_win_is_valid(claude_win) then
-        vim.api.nvim_win_close(claude_win, false)
-        claude_win = nil
+local function close_ai_terminal()
+    if ai_win and vim.api.nvim_win_is_valid(ai_win) then
+        vim.api.nvim_win_close(ai_win, false)
+        ai_win = nil
         zoom_state.is_zoomed = false
     end
 end
 
-local function toggle_claude()
-    if claude_win and vim.api.nvim_win_is_valid(claude_win) then
-        close_claude()
+local function toggle_ai_terminal()
+    if ai_win and vim.api.nvim_win_is_valid(ai_win) then
+        close_ai_terminal()
     else
-        open_claude()
+        open_ai_terminal()
     end
 end
 
-local function focus_claude()
-    if claude_win and vim.api.nvim_win_is_valid(claude_win) then
-        vim.api.nvim_set_current_win(claude_win)
+local function focus_ai_terminal()
+    if ai_win and vim.api.nvim_win_is_valid(ai_win) then
+        vim.api.nvim_set_current_win(ai_win)
         vim.cmd('startinsert')
     else
-        open_claude()
+        open_ai_terminal()
     end
 end
 
-local function zoom_claude()
-    if not claude_win or not vim.api.nvim_win_is_valid(claude_win) then
-        open_claude()
+local function cycle_ai_terminal()
+    ai_current = (ai_current % #ai_terminals) + 1
+    local ai = current_ai()
+
+    if ai_win and vim.api.nvim_win_is_valid(ai_win) then
+        -- Create buffer if needed
+        local buf = ai_bufs[ai.name]
+        if not buf or not vim.api.nvim_buf_is_valid(buf) then
+            -- Need to create the terminal in the existing window
+            vim.api.nvim_set_current_win(ai_win)
+            local project_root = get_project_root()
+            vim.cmd('lcd ' .. vim.fn.fnameescape(project_root))
+            vim.cmd('terminal ' .. ai.cmd)
+            buf = vim.api.nvim_get_current_buf()
+            ai_bufs[ai.name] = buf
+            vim.bo[buf].buflisted = false
+
+            local name = ai.name
+            vim.api.nvim_create_autocmd('TermClose', {
+                buffer = buf,
+                callback = function()
+                    vim.schedule(function()
+                        if ai_bufs[name] and vim.api.nvim_buf_is_valid(ai_bufs[name]) then
+                            vim.api.nvim_buf_delete(ai_bufs[name], { force = true })
+                        end
+                        ai_bufs[name] = nil
+                        if ai_win and not vim.api.nvim_win_is_valid(ai_win) then
+                            ai_win = nil
+                            zoom_state.is_zoomed = false
+                        end
+                    end)
+                end,
+            })
+        else
+            vim.api.nvim_win_set_buf(ai_win, buf)
+        end
+        vim.api.nvim_set_current_win(ai_win)
+        vim.cmd('startinsert')
+    else
+        open_ai_terminal()
+    end
+
+    vim.notify('Switched to ' .. ai.name, vim.log.levels.INFO)
+end
+
+local function zoom_ai_terminal()
+    if not ai_win or not vim.api.nvim_win_is_valid(ai_win) then
+        open_ai_terminal()
         return
     end
 
     if zoom_state.is_zoomed then
         -- Restore previous width
         local width = zoom_state.prev_width or math.floor(vim.o.columns * config.claude_width_percent)
-        vim.api.nvim_win_set_width(claude_win, width)
+        vim.api.nvim_win_set_width(ai_win, width)
         zoom_state.is_zoomed = false
     else
         -- Save current width and maximize
-        zoom_state.prev_width = vim.api.nvim_win_get_width(claude_win)
-        vim.api.nvim_win_set_width(claude_win, vim.o.columns)
+        zoom_state.prev_width = vim.api.nvim_win_get_width(ai_win)
+        vim.api.nvim_win_set_width(ai_win, vim.o.columns)
         zoom_state.is_zoomed = true
     end
 
-    vim.api.nvim_set_current_win(claude_win)
+    vim.api.nvim_set_current_win(ai_win)
     vim.cmd('startinsert')
 end
 
--- Send visual selection to Claude with context
-local function send_to_claude()
+-- Send visual selection to current AI terminal with context
+local function send_to_ai_terminal()
     local selection = get_visual_selection()
     if selection == '' then
         vim.notify('No selection', vim.log.levels.WARN)
@@ -225,7 +299,6 @@ local function send_to_claude()
     end
 
     -- Get file context
-    local filepath = vim.fn.expand('%:p')
     local relative_path = vim.fn.expand('%:.')
     local start_line = vim.fn.line("'<")
     local end_line = vim.fn.line("'>")
@@ -239,19 +312,23 @@ local function send_to_claude()
         selection
     )
 
-    -- Open Claude if not open
-    if not claude_win or not vim.api.nvim_win_is_valid(claude_win) then
-        open_claude()
+    local buf = current_ai_buf()
+
+    -- Open AI terminal if not open
+    if not ai_win or not vim.api.nvim_win_is_valid(ai_win) then
+        open_ai_terminal()
         -- Wait a bit for terminal to initialize
         vim.defer_fn(function()
-            if claude_buf and vim.api.nvim_buf_is_valid(claude_buf) then
-                -- Send the context to the terminal
-                vim.api.nvim_chan_send(vim.bo[claude_buf].channel, context)
+            buf = current_ai_buf()
+            if buf and vim.api.nvim_buf_is_valid(buf) then
+                vim.api.nvim_chan_send(vim.bo[buf].channel, context)
             end
         end, 100)
     else
-        vim.api.nvim_set_current_win(claude_win)
-        vim.api.nvim_chan_send(vim.bo[claude_buf].channel, context)
+        vim.api.nvim_set_current_win(ai_win)
+        if buf and vim.api.nvim_buf_is_valid(buf) then
+            vim.api.nvim_chan_send(vim.bo[buf].channel, context)
+        end
         vim.cmd('startinsert')
     end
 end
@@ -326,12 +403,13 @@ end
 -- Public API
 -------------------------------------------------------------------------------
 
-M.open = open_claude
-M.close = close_claude
-M.toggle = toggle_claude
-M.focus = focus_claude
-M.zoom = zoom_claude
-M.send = send_to_claude
+M.open = open_ai_terminal
+M.close = close_ai_terminal
+M.toggle = toggle_ai_terminal
+M.focus = focus_ai_terminal
+M.cycle = cycle_ai_terminal
+M.zoom = zoom_ai_terminal
+M.send = send_to_ai_terminal
 M.open_shell = open_shell
 M.close_shell = close_shell
 M.toggle_shell = toggle_shell
@@ -342,13 +420,14 @@ M.toggle_shell = toggle_shell
 
 local options = { noremap = true, silent = true }
 
--- Claude Code
-vim.keymap.set('n', '<leader>mc', toggle_claude, vim.tbl_extend('force', options, { desc = 'Toggle Claude Code' }))
-vim.keymap.set('n', '<leader>mo', open_claude, vim.tbl_extend('force', options, { desc = 'Open Claude Code' }))
-vim.keymap.set('n', '<leader>md', close_claude, vim.tbl_extend('force', options, { desc = 'Close Claude Code' }))
-vim.keymap.set('n', '<leader>mf', focus_claude, vim.tbl_extend('force', options, { desc = 'Focus Claude Code' }))
-vim.keymap.set('n', '<leader>mz', zoom_claude, vim.tbl_extend('force', options, { desc = 'Zoom Claude Code' }))
-vim.keymap.set('v', '<leader>ms', send_to_claude, vim.tbl_extend('force', options, { desc = 'Send selection to Claude' }))
+-- AI Terminal
+vim.keymap.set('n', '<leader>mc', toggle_ai_terminal, vim.tbl_extend('force', options, { desc = 'Toggle AI terminal' }))
+vim.keymap.set('n', '<leader>mo', open_ai_terminal, vim.tbl_extend('force', options, { desc = 'Open AI terminal' }))
+vim.keymap.set('n', '<leader>md', close_ai_terminal, vim.tbl_extend('force', options, { desc = 'Close AI terminal' }))
+vim.keymap.set('n', '<leader>mf', focus_ai_terminal, vim.tbl_extend('force', options, { desc = 'Focus AI terminal' }))
+vim.keymap.set('n', '<leader>mz', zoom_ai_terminal, vim.tbl_extend('force', options, { desc = 'Zoom AI terminal' }))
+vim.keymap.set('n', '<leader>mn', cycle_ai_terminal, vim.tbl_extend('force', options, { desc = 'Cycle to next AI terminal' }))
+vim.keymap.set('v', '<leader>ms', send_to_ai_terminal, vim.tbl_extend('force', options, { desc = 'Send selection to AI terminal' }))
 
 -- Shell
 vim.keymap.set('n', '<leader>mt', toggle_shell, vim.tbl_extend('force', options, { desc = 'Toggle shell terminal' }))
@@ -441,8 +520,8 @@ vim.api.nvim_create_autocmd('TermOpen', {
             local win = vim.api.nvim_get_current_win()
             vim.api.nvim_win_close(win, false)
             -- Reset tracked windows if this was one of ours
-            if win == claude_win then
-                claude_win = nil
+            if win == ai_win then
+                ai_win = nil
                 zoom_state.is_zoomed = false
             elseif win == shell_win then
                 shell_win = nil
