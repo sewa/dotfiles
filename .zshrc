@@ -117,9 +117,16 @@ gcm() {
                 fi
                 ;;
             e|E )
-                read_input "Enter your commit message: "
-                commit_message=$REPLY
-                if [ -n "$commit_message" ] && git commit -m "$commit_message"; then
+                local tmpfile=$(mktemp)
+                echo "$commit_message" > "$tmpfile"
+                nvim "$tmpfile"
+                commit_message=$(cat "$tmpfile")
+                rm -f "$tmpfile"
+                if [ -z "$commit_message" ]; then
+                    echo "Empty commit message. Aborting."
+                    return 1
+                fi
+                if git commit -m "$commit_message"; then
                     echo "Changes committed successfully with your message!"
                     return 0
                 else
