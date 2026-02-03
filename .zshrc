@@ -158,7 +158,7 @@ fi
 source "$HOME/Projects/fzf-tab/fzf-tab.plugin.zsh"
 
 # FZF
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(fzf --zsh)
 
 zstyle ':fzf-tab:*' switch-group ',' '.'
 zstyle ':fzf-tab:*' fzf-bindings 'space:accept'
