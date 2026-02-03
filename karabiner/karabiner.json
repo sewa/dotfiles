@@ -625,6 +625,43 @@
                                 "type": "basic"
                             }
                         ]
+                    },
+                    {
+                        "description": "Window Tiling (Ctrl+Cmd+hjkl)",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "h",
+                                    "modifiers": { "mandatory": ["control", "command"] }
+                                },
+                                "to": [{ "key_code": "left_arrow", "modifiers": ["control", "fn"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "l",
+                                    "modifiers": { "mandatory": ["control", "command"] }
+                                },
+                                "to": [{ "key_code": "right_arrow", "modifiers": ["control", "fn"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "k",
+                                    "modifiers": { "mandatory": ["control", "command"] }
+                                },
+                                "to": [{ "key_code": "f", "modifiers": ["fn"] }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "j",
+                                    "modifiers": { "mandatory": ["control", "command"] }
+                                },
+                                "to": [{ "key_code": "down_arrow", "modifiers": ["control", "fn"] }],
+                                "type": "basic"
+                            }
+                        ]
                     }
                 ]
             },

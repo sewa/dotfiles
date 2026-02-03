@@ -297,22 +297,44 @@ Uses conventional commit format: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`,
 | `I` | Mute |
 | `P` | Play/pause |
 
+### Space Navigation (Opt)
+
+| Key | Action |
+|-----|--------|
+| `Opt+H` | Previous desktop/space |
+| `Opt+L` | Next desktop/space |
+
+### Window Tiling (Ctrl+Cmd)
+
+Uses macOS Sequoia native tiling.
+
+| Key | Action |
+|-----|--------|
+| `H` | Left half |
+| `L` | Right half |
+| `K` | Fill (maximize without full-screen) |
+| `J` | Restore (previous size/position) |
+
 ### Vi Mode
 
-Press `S` + `h/j/k/l` to activate vi mode anywhere (except terminals/editors).
+Hold `S` + movement key to navigate. Works system-wide.
 
 | Key | Action |
 |-----|--------|
 | `h/j/k/l` | Arrow keys |
 | `w/b` | Word forward/backward |
-| `0/$` | Line start/end |
-| `g/G` | Document start/end |
-| `x` | Delete forward |
-| `u` | Undo |
+| `0/4` | Line start/end (Ctrl+A/E) |
+| `f` | Globe/fn key |
 
 ### Visual Mode
 
-Press `V` + movement to select text with vi-style navigation.
+Hold `V` + movement key to select text. Excluded from terminals and editors (where native vi works).
+
+| Key | Action |
+|-----|--------|
+| `h/j/k/l` | Select char/line |
+| `w/b` | Select word forward/backward |
+| `0/4` | Select to line start/end |
 
 ## Language Support
 
