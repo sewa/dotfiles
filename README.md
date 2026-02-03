@@ -312,7 +312,7 @@ Uses macOS Sequoia native tiling.
 |-----|--------|
 | `H` | Left half |
 | `L` | Right half |
-| `K` | Fill (maximize without full-screen) |
+| `K` | Full-screen |
 | `J` | Restore (previous size/position) |
 
 ### Vi Mode

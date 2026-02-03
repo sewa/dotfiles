@@ -1,6 +1,7 @@
+[include]
+	path = ~/.gitconfig.local
 [user]
 	name = Severin Schwanck
-	email = schwanck@promptus-partners.de
 [core]
 	editor = nvim
 	excludesfile = ~/.gitignore
