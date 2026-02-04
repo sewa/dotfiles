@@ -537,11 +537,11 @@ vim.api.nvim_create_autocmd('TermOpen', {
             end,
         })
 
-        -- Enter scroll mode: <C-s> in terminal mode
-        vim.keymap.set('t', '<C-s>', function()
+        -- Enter scroll mode: <C-space>[ in terminal mode (mirrors tmux)
+        vim.keymap.set('t', '<C-space>[', function()
             vim.b[buf].terminal_scroll_mode = true
             vim.cmd('stopinsert')
-            vim.notify('Scroll mode (press i to exit)', vim.log.levels.INFO)
+            vim.notify('Scroll mode (q or i to exit)', vim.log.levels.INFO)
         end, { buffer = buf, noremap = true, silent = true, desc = 'Enter scroll mode' })
 
         -- Exit scroll mode: i in normal mode (for terminal buffers)
