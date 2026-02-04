@@ -537,18 +537,39 @@ vim.api.nvim_create_autocmd('TermOpen', {
             end,
         })
 
-        -- Enter scroll mode: <C-space>[ in terminal mode (mirrors tmux)
-        vim.keymap.set('t', '<C-space>[', function()
+        -- Enter scroll mode: <C-s> in terminal mode
+        vim.keymap.set('t', '<C-s>', function()
             vim.b[buf].terminal_scroll_mode = true
             vim.cmd('stopinsert')
-            vim.notify('Scroll mode (q or i to exit)', vim.log.levels.INFO)
+            vim.notify('Scroll mode (<C-s> or i to exit)', vim.log.levels.INFO)
         end, { buffer = buf, noremap = true, silent = true, desc = 'Enter scroll mode' })
+
+        -- Exit scroll mode: <C-s> in normal mode (for terminal buffers)
+        vim.keymap.set('n', '<C-s>', function()
+            if vim.b[buf].terminal_scroll_mode then
+                vim.b[buf].terminal_scroll_mode = false
+                vim.cmd('startinsert')
+            end
+        end, { buffer = buf, noremap = true, silent = true, desc = 'Exit scroll mode' })
 
         -- Exit scroll mode: i in normal mode (for terminal buffers)
         vim.keymap.set('n', 'i', function()
             vim.b[buf].terminal_scroll_mode = false
             vim.cmd('startinsert')
         end, { buffer = buf, noremap = true, silent = true, desc = 'Exit scroll mode' })
+
+        -- Close terminal window with q in normal mode
+        vim.keymap.set('n', 'q', function()
+            local win = vim.api.nvim_get_current_win()
+            vim.api.nvim_win_close(win, false)
+            -- Reset tracked windows if this was one of ours
+            if win == ai_win then
+                ai_win = nil
+                zoom_state.is_zoomed = false
+            elseif win == shell_win then
+                shell_win = nil
+            end
+        end, { buffer = buf, noremap = true, silent = true, desc = 'Close terminal window' })
     end,
 })
 
@@ -568,30 +589,7 @@ vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j', options)
 vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', options)
 vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', options)
 
--------------------------------------------------------------------------------
--- Terminal Mode Convenience
--------------------------------------------------------------------------------
-
 -- Escape passes through to terminal apps (no mapping needed)
 -- Use <C-\><C-n> to exit to normal mode if needed
-
--- Close terminal window with q in normal mode (when in terminal buffer)
-vim.api.nvim_create_autocmd('TermOpen', {
-    pattern = '*',
-    callback = function()
-        local buf = vim.api.nvim_get_current_buf()
-        vim.keymap.set('n', 'q', function()
-            local win = vim.api.nvim_get_current_win()
-            vim.api.nvim_win_close(win, false)
-            -- Reset tracked windows if this was one of ours
-            if win == ai_win then
-                ai_win = nil
-                zoom_state.is_zoomed = false
-            elseif win == shell_win then
-                shell_win = nil
-            end
-        end, { buffer = buf, noremap = true, silent = true, desc = 'Close terminal window' })
-    end,
-})
 
 return M

@@ -13,7 +13,7 @@ Personal dotfiles repository for macOS development environment. Manages configur
   - `lua/packages.lua` - Plugin definitions using lazy.nvim
   - `lua/lsp.lua` - Language Server Protocol setup with Mason
   - `lua/keymap.lua` - All keybindings organized by category
-  - `lua/claude.lua` - Terminal management for Claude Code integration
+  - `lua/ai_terminal.lua` - Terminal management for Claude Code integration
   - `lua/options.lua` - Editor settings
   - `lsp/` - Server-specific LSP configurations
 - `karabiner/` - Keyboard customization for macOS

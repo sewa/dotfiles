@@ -295,9 +295,9 @@ require('lazy').setup({
                         enableTestLenses = false,
                     },
                     on_attach = function(client, bufnr)
-                        vim.keymap.set("n", "<space>lfp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
-                        vim.keymap.set("n", "<space>ltp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
-                        vim.keymap.set("v", "<space>lem", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+                        vim.keymap.set("n", "<leader>lfp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+                        vim.keymap.set("n", "<leader>ltp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+                        vim.keymap.set("v", "<leader>lem", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
                     end,
                 }
             }
