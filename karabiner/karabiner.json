@@ -33,8 +33,18 @@
                                 "type": "basic"
                             },
                             {
-                                "from": { "key_code": "p", "modifiers": { "mandatory": ["control", "command"] } },
+                                "from": { "key_code": "h", "modifiers": { "mandatory": ["control", "command"] } },
+                                "to": [{ "consumer_key_code": "rewind" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": { "key_code": "k", "modifiers": { "mandatory": ["control", "command"] } },
                                 "to": [{ "consumer_key_code": "play_or_pause" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": { "key_code": "l", "modifiers": { "mandatory": ["control", "command"] } },
+                                "to": [{ "consumer_key_code": "fast_forward" }],
                                 "type": "basic"
                             }
                         ]

@@ -295,7 +295,8 @@ Uses conventional commit format: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`,
 | `N/M` | Brightness down/up |
 | `U/O` | Volume down/up |
 | `I` | Mute |
-| `P` | Play/pause |
+| `H/L` | Previous/next track |
+| `K` | Play/pause |
 
 ### Space Navigation (Opt)
 
