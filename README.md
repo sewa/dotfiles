@@ -304,17 +304,6 @@ Uses conventional commit format: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`,
 | `Opt+H` | Previous desktop/space |
 | `Opt+L` | Next desktop/space |
 
-### Window Tiling (Ctrl+Cmd)
-
-Uses macOS Sequoia native tiling.
-
-| Key | Action |
-|-----|--------|
-| `H` | Left half |
-| `L` | Right half |
-| `K` | Full-screen |
-| `J` | Restore (previous size/position) |
-
 ### Vi Mode
 
 Hold `S` + movement key to navigate. Works system-wide.
