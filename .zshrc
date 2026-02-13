@@ -77,7 +77,7 @@ gcm() {
 
     # Function to generate commit message
     generate_commit_message() {
-        git diff --cached | claude -p "Generate a commit message for this diff. Use conventional commit format (feat:, fix:, docs:, refactor:, test:, chore:). Keep the first line under 72 characters. Be specific. Output only the commit message, no trailers or co-authored-by lines."
+        git diff --cached | claude -p "Generate a commit message for this diff. Use conventional commit format (feat:, fix:, docs:, refactor:, test:, chore:). Keep the first line under 72 characters. Be specific. Output only the commit message, no trailers or co-authored-by lines. Do not wrap the message in backticks or code blocks."
     }
 
     # Function to read user input compatibly with both Bash and Zsh
