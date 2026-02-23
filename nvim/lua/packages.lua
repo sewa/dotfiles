@@ -2,7 +2,6 @@ require('lazy').setup({
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
-    'onsails/lspkind-nvim',
     {
         "OlegGulevskyy/better-ts-errors.nvim",
         dependencies = { "MunifTanjim/nui.nvim" },
@@ -85,24 +84,6 @@ require('lazy').setup({
     },
 
     {
-        'L3MON4D3/LuaSnip',
-        dependencies = { "rafamadriz/friendly-snippets" }
-    },
-
-    {
-        "ray-x/lsp_signature.nvim",
-        config = function()
-            -- vim.g.completion_enable_auto_signature = false
-            require "lsp_signature".setup({
-                bind = true,
-                handler_opts = {
-                    border = "rounded"
-                }
-            })
-        end
-    },
-
-    {
         'vim-test/vim-test',
         config = function()
             vim.cmd [[let test#strategy = "neovim"]]
@@ -136,7 +117,7 @@ require('lazy').setup({
     },
 
     {
-        'kyazdani42/nvim-tree.lua',
+        'nvim-tree/nvim-tree.lua',
         config = function()
             require('nvim-tree').setup({
                 view = {
@@ -144,16 +125,6 @@ require('lazy').setup({
                 }
             })
             vim.g.nvim_tree_disable_window_picker = 1
-        end
-    },
-
-    {
-        'terrortylor/nvim-comment',
-        config = function()
-            require 'nvim_comment'.setup {
-                comment_empty = false,
-                create_mappings = false
-            }
         end
     },
 
@@ -216,15 +187,6 @@ require('lazy').setup({
                     mode = "n",
                     silent = true,
                 },
-                -- Toggle inline diff for current file vs HEAD
-                {
-                    "<leader>gd",
-                    function()
-                        require("unified").toggle()
-                    end,
-                    desc = "Git Diff (inline unified diff)",
-                },
-
                 -- OPTIONAL: Show inline diff against a specific commit
                 {
                     "<leader>gD",
@@ -276,7 +238,6 @@ require('lazy').setup({
         end
     },
 
-    'elixir-editors/vim-elixir',
     {
         "elixir-tools/elixir-tools.nvim",
         version = "*",
@@ -312,7 +273,6 @@ require('lazy').setup({
         dependencies = {
             'nvim-treesitter/nvim-treesitter-textobjects',
             'nvim-treesitter/nvim-treesitter-context',
-            'nvim-treesitter/nvim-treesitter-refactor',
         },
         build = ':TSUpdate',
         config = function()
@@ -320,14 +280,6 @@ require('lazy').setup({
                 ensure_installed = { 'ruby', 'lua', 'typescript', 'javascript', 'css', 'bash', 'elixir', 'eex', 'heex',
                     'erlang', 'html' },
                 sync_install = false,
-                refactor = {
-                    smart_rename = {
-                        enable = true,
-                        keymaps = {
-                            smart_rename = 'grr',
-                        },
-                    },
-                },
                 textobjects = {
                     select = {
                         enable = true,
@@ -356,61 +308,46 @@ require('lazy').setup({
     },
 
     {
-        'hrsh7th/nvim-cmp',
-        dependencies = { 'hrsh7th/cmp-nvim-lsp', 'hrsh7th/cmp-buffer' },
-        config = function()
-            local has_words_before = function()
-                unpack = unpack or table.unpack
-                local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-                return col ~= 0 and
-                    vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-            end
-            local cmp = require 'cmp'
-            local lspkind = require('lspkind')
-            local luasnip = require('luasnip')
-            require('luasnip.loaders.from_vscode').lazy_load()
-            require 'luasnip'.filetype_extend('ruby', { 'rails' })
-            cmp.setup({
-                snippet = {
-                    expand = function(args)
-                        luasnip.lsp_expand(args.body)
-                    end,
+        'saghen/blink.cmp',
+        version = '1.*',
+        dependencies = { 'rafamadriz/friendly-snippets' },
+        ---@module 'blink.cmp'
+        ---@type blink.cmp.Config
+        opts = {
+            keymap = {
+                preset = 'none',
+                ['<CR>']    = { 'accept', 'fallback' },
+                ['<Tab>']   = { 'select_next', 'snippet_forward', 'fallback' },
+                ['<S-Tab>'] = { 'select_prev', 'snippet_backward', 'fallback' },
+                ['<Down>']  = { 'select_next', 'fallback' },
+                ['<Up>']    = { 'select_prev', 'fallback' },
+                ['<C-e>']   = { 'hide', 'fallback' },
+                ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
+                ['<C-b>']   = { 'scroll_documentation_up', 'fallback' },
+                ['<C-f>']   = { 'scroll_documentation_down', 'fallback' },
+            },
+            appearance = {
+                nerd_font_variant = 'mono',
+            },
+            completion = {
+                documentation = {
+                    auto_show = true,
+                    auto_show_delay_ms = 500,
                 },
-                formatting = {
-                    format = lspkind.cmp_format({
-                        mode = 'symbol'
-                    })
+                list = {
+                    selection = {
+                        preselect = true,
+                        auto_insert = false,
+                    },
                 },
-                mapping = {
-                    ['<C-e>'] = cmp.mapping({
-                        i = cmp.mapping.abort(),
-                        c = cmp.mapping.close(),
-                    }),
-                    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-                    ['<Down>'] = cmp.mapping(cmp.mapping.select_next_item({
-                        behavior = cmp.SelectBehavior.Select
-                    }), { 'i', 'c' }),
-                    ['<Up>'] = cmp.mapping(cmp.mapping.select_prev_item({
-                        behavior = cmp.SelectBehavior.Select
-                    }), { 'i', 'c' }),
-                    ['<Tab>'] = cmp.mapping(function(fallback)
-                        if cmp.visible() then
-                            cmp.select_next_item()
-                        elseif luasnip.expand_or_jumpable() then
-                            luasnip.expand_or_jump()
-                        elseif has_words_before() then
-                            cmp.complete()
-                        else
-                            fallback()
-                        end
-                    end, { 'i', 's' }),
-                },
-                sources = {
-                    { name = 'luasnip' },
-                    { name = 'nvim_lsp' },
-                    { name = 'buffer' }
-                }
-            })
-        end
+            },
+            signature = {
+                enabled = true,
+            },
+            sources = {
+                default = { 'lsp', 'path', 'snippets', 'buffer' },
+            },
+        },
+        opts_extend = { 'sources.default' },
     },
 })

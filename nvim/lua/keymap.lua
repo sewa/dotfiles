@@ -16,9 +16,9 @@ vim.keymap.set('n', '<leader>pt', '<cmd>NvimTreeToggle<cr>', opts('Toggle file t
 vim.keymap.set('n', '<leader>pf', '<cmd>NvimTreeFindFile<cr>', opts('Find file in tree'))
 vim.keymap.set('n', '<leader>pr', '<cmd>NvimTreeRefresh<cr>', opts('Refresh file tree'))
 
--- Comment Keymaps
-vim.keymap.set('n', '<leader>cl', '<cmd>CommentToggle<cr>', opts('Toggle comment'))
-vim.keymap.set('v', '<leader>cl', ':CommentToggle<cr>', opts('Toggle comment'))
+-- Comment Keymaps (uses built-in gc/gcc from Neovim 0.10+)
+vim.keymap.set('n', '<leader>cl', 'gcc', { remap = true, silent = true, desc = 'Toggle comment' })
+vim.keymap.set('v', '<leader>cl', 'gc', { remap = true, silent = true, desc = 'Toggle comment' })
 
 -- File Keymaps
 vim.keymap.set('n', '<leader>fs', '<cmd>w<cr>', opts('Save file'))

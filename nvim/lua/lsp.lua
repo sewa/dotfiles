@@ -103,7 +103,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end,
 })
 
-local cmp_caps = require('cmp_nvim_lsp').default_capabilities()
+local cmp_caps = require('blink.cmp').get_lsp_capabilities()
 if vim.lsp and vim.lsp.config then
     vim.lsp.config('*', {
         capabilities = cmp_caps,
