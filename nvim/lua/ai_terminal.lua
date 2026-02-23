@@ -85,7 +85,7 @@ local zoom_state = {
 -- Configuration
 local config = {
     claude_width_percent = 0.5,
-    shell_height = 15,
+    shell_height_percent = 0.4,
 }
 
 -------------------------------------------------------------------------------
@@ -408,7 +408,7 @@ local function open_shell()
     end
 
     vim.cmd('botright split')
-    vim.cmd('resize ' .. config.shell_height)
+    vim.cmd('resize ' .. math.floor(vim.o.lines * config.shell_height_percent))
 
     -- Reuse existing buffer or create new terminal
     if shell_buf and vim.api.nvim_buf_is_valid(shell_buf) then
