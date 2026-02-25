@@ -55,6 +55,14 @@ opt.shiftwidth  = 2
 opt.tabstop     = 2
 opt.softtabstop = 2
 
+-- Treesitter highlighting for filetypes not auto-enabled by Neovim
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "elixir", "heex", "eex" },
+    callback = function()
+        vim.treesitter.start()
+    end,
+})
+
 -- Command line
 opt.cmdheight  = 0
 opt.switchbuf  = 'useopen'
