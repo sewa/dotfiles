@@ -279,28 +279,27 @@ require('lazy').setup({
             require('nvim-treesitter').setup({
                 ensure_installed = { 'ruby', 'lua', 'typescript', 'javascript', 'css', 'bash', 'elixir', 'eex', 'heex',
                     'erlang', 'html' },
-            })
-
-            require('nvim-treesitter-textobjects').setup({
-                select = {
-                    enable = true,
-                    lookahead = true,
-                    keymaps = {
-                        ['af'] = '@function.outer',
-                        ['if'] = '@function.inner',
-                        ['ab'] = '@block.outer',
-                        ['ib'] = '@block.inner',
-                        ['ac'] = '@call.outer',
-                        ['ic'] = '@call.inner',
+                textobjects = {
+                    select = {
+                        enable = true,
+                        lookahead = true,
+                        keymaps = {
+                            ['af'] = '@function.outer',
+                            ['if'] = '@function.inner',
+                            ['ab'] = '@block.outer',
+                            ['ib'] = '@block.inner',
+                            ['ac'] = '@call.outer',
+                            ['ic'] = '@call.inner',
+                        },
                     },
-                },
-                swap = {
-                    enable = true,
-                    swap_next = {
-                        ['<leader>a'] = '@parameter.inner',
-                    },
-                    swap_previous = {
-                        ['<leader>A'] = '@parameter.inner',
+                    swap = {
+                        enable = true,
+                        swap_next = {
+                            ['<leader>a'] = '@parameter.inner',
+                        },
+                        swap_previous = {
+                            ['<leader>A'] = '@parameter.inner',
+                        },
                     },
                 },
             })
