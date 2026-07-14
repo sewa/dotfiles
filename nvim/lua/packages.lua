@@ -270,39 +270,43 @@ require('lazy').setup({
 
     {
         'nvim-treesitter/nvim-treesitter',
+        branch = 'main',
+        lazy = false,
         dependencies = {
-            'nvim-treesitter/nvim-treesitter-textobjects',
+            { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'main' },
             'nvim-treesitter/nvim-treesitter-context',
         },
         build = ':TSUpdate',
         config = function()
-            require('nvim-treesitter').setup({
-                ensure_installed = { 'ruby', 'lua', 'typescript', 'javascript', 'css', 'bash', 'elixir', 'eex', 'heex',
-                    'erlang', 'html' },
-                textobjects = {
-                    select = {
-                        enable = true,
-                        lookahead = true,
-                        keymaps = {
-                            ['af'] = '@function.outer',
-                            ['if'] = '@function.inner',
-                            ['ab'] = '@block.outer',
-                            ['ib'] = '@block.inner',
-                            ['ac'] = '@call.outer',
-                            ['ic'] = '@call.inner',
-                        },
-                    },
-                    swap = {
-                        enable = true,
-                        swap_next = {
-                            ['<leader>a'] = '@parameter.inner',
-                        },
-                        swap_previous = {
-                            ['<leader>A'] = '@parameter.inner',
-                        },
-                    },
+            -- Async and idempotent: only installs missing parsers
+            require('nvim-treesitter').install({ 'ruby', 'lua', 'typescript', 'javascript', 'css', 'bash', 'elixir',
+                'eex', 'heex', 'erlang', 'html' })
+
+            require('nvim-treesitter-textobjects').setup({
+                select = {
+                    lookahead = true,
                 },
             })
+
+            local textobject_keymaps = {
+                ['af'] = '@function.outer',
+                ['if'] = '@function.inner',
+                ['ab'] = '@block.outer',
+                ['ib'] = '@block.inner',
+                ['ac'] = '@call.outer',
+                ['ic'] = '@call.inner',
+            }
+            for lhs, capture in pairs(textobject_keymaps) do
+                vim.keymap.set({ 'x', 'o' }, lhs, function()
+                    require('nvim-treesitter-textobjects.select').select_textobject(capture, 'textobjects')
+                end)
+            end
+            vim.keymap.set('n', '<leader>a', function()
+                require('nvim-treesitter-textobjects.swap').swap_next('@parameter.inner')
+            end)
+            vim.keymap.set('n', '<leader>A', function()
+                require('nvim-treesitter-textobjects.swap').swap_previous('@parameter.inner')
+            end)
         end
     },
 
