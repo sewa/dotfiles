@@ -69,7 +69,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         bufmap('x', '<leader>la', vim.lsp.buf.code_action, 'Range code action')
 
         -- Inlay hints (Neovim 0.10+)
-        if client and client.supports_method('textDocument/inlayHint') then
+        if client and client:supports_method('textDocument/inlayHint') then
             vim.lsp.inlay_hint.enable(true, { bufnr = buf })
         end
         bufmap('n', '<leader>lI', function()
@@ -77,7 +77,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end, 'Toggle inlay hints')
 
         -- Document highlight (highlight references under cursor)
-        if client and client.supports_method('textDocument/documentHighlight') then
+        if client and client:supports_method('textDocument/documentHighlight') then
             local hl_group = vim.api.nvim_create_augroup('lsp_document_highlight', { clear = false })
             vim.api.nvim_clear_autocmds({ group = hl_group, buffer = buf })
             vim.api.nvim_create_autocmd('CursorHold', {
@@ -125,14 +125,11 @@ require('mason').setup({})
 
 local mlsp = require('mason-lspconfig')
 
+-- mason-lspconfig v2 removed `handlers`; installed servers are enabled
+-- automatically via `automatic_enable` (default true).
 mlsp.setup({
     ensure_installed = {
         'ts_ls',
         'lua_ls',
-    },
-    handlers = {
-        function(server_name)
-            vim.lsp.enable(server_name)
-        end,
     },
 })

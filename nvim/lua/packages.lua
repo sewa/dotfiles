@@ -46,11 +46,14 @@ require('lazy').setup({
             suggestion = {
                 enabled = true,
                 auto_trigger = true,
+                -- copilot maps these unconditionally with no fallback, so
+                -- <C-h> (backspace), <C-n>/<C-p> (keyword completion) were
+                -- dead in insert mode. Moved off the defaults.
                 keymap = {
                     accept = "<C-l>",
-                    next = "<C-n>",
-                    prev = "<C-p>",
-                    dismiss = "<C-h>",
+                    next = "<M-n>",
+                    prev = "<M-p>",
+                    dismiss = "<C-]>",
                 },
             },
             filetypes = {
@@ -246,11 +249,15 @@ require('lazy').setup({
             local elixir = require("elixir")
             local elixirls = require("elixir.elixirls")
 
+            -- nextls + elixirls both enabled ran two language servers on every
+            -- Elixir buffer and triggered a blocking "Install ElixirLS" prompt.
+            -- nextls is the actively developed one; flip `enable` on the two
+            -- blocks below to go back to ElixirLS.
             elixir.setup {
                 nextls = { enable = true },
                 credo = {},
                 elixirls = {
-                    enable = true,
+                    enable = false,
                     settings = elixirls.settings {
                         dialyzerEnabled = false,
                         enableTestLenses = false,
@@ -325,6 +332,12 @@ require('lazy').setup({
                 ['<Down>']  = { 'select_next', 'fallback' },
                 ['<Up>']    = { 'select_prev', 'fallback' },
                 ['<C-e>']   = { 'hide', 'fallback' },
+                -- <C-space> is the tmux prefix and never reaches Neovim inside
+                -- tmux; <C-n>/<C-p> are a tmux-safe way to open and walk the
+                -- menu (cmp.show() returns falsy when already open, so these
+                -- fall through to select_next/select_prev).
+                ['<C-n>']   = { 'show', 'select_next', 'fallback' },
+                ['<C-p>']   = { 'show', 'select_prev', 'fallback' },
                 ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
                 ['<C-b>']   = { 'scroll_documentation_up', 'fallback' },
                 ['<C-f>']   = { 'scroll_documentation_down', 'fallback' },

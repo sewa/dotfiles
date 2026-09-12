@@ -55,23 +55,12 @@ vim.api.nvim_create_autocmd('FileType', {
 })
 
 -- Custom filetypes
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-    pattern = '*.kbd',
-    callback = function()
-        vim.bo.filetype = 'kbd'
-    end,
-})
-
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-    pattern = { '*.ex', '*.exs', 'mix.lock' },
-    callback = function()
-        vim.bo.filetype = 'elixir'
-    end,
-})
-
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {
-    pattern = { '*.eex', '*.heex', '*.leex', '*.sface', '*.lexs' },
-    callback = function()
-        vim.bo.filetype = 'eelixir'
-    end,
+-- Neovim already detects every Elixir extension natively (.ex/.exs/mix.lock ->
+-- elixir, .heex -> heex, .eex/.leex -> eelixir, .sface -> surface). The old
+-- autocmds forced .heex and .sface to eelixir, which gave them the wrong
+-- ftplugin/indent rules. Only .kbd is genuinely unknown to Neovim.
+vim.filetype.add({
+    extension = {
+        kbd = 'kbd',
+    },
 })

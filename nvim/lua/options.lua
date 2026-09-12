@@ -55,11 +55,12 @@ opt.shiftwidth  = 2
 opt.tabstop     = 2
 opt.softtabstop = 2
 
--- Treesitter highlighting for filetypes not auto-enabled by Neovim
+-- Treesitter highlighting. nvim-treesitter's `main` branch never enables this
+-- itself, so every filetype with an installed parser needs an explicit start.
+-- pcall keeps filetypes without a parser silent.
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "elixir", "heex", "eex" },
-    callback = function()
-        vim.treesitter.start()
+    callback = function(args)
+        pcall(vim.treesitter.start, args.buf)
     end,
 })
 

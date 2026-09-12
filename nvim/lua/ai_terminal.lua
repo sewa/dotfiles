@@ -136,6 +136,41 @@ local function current_ai_buf()
     return ai_bufs[current_ai().name]
 end
 
+-- Spawn `ai`'s terminal in the *current* window and track its buffer.
+-- Single source of truth for the TermClose cleanup: previously open_ai_terminal
+-- and cycle_ai_terminal each had their own copy and disagreed about whether a
+-- still-valid window should be closed when the process exited.
+local function spawn_ai_terminal(ai)
+    vim.cmd('lcd ' .. vim.fn.fnameescape(get_project_root()))
+    vim.cmd('terminal ' .. ai.cmd)
+
+    local buf = vim.api.nvim_get_current_buf()
+    local name = ai.name
+    ai_bufs[name] = buf
+    vim.bo[buf].buflisted = false
+
+    vim.api.nvim_create_autocmd('TermClose', {
+        buffer = buf,
+        callback = function()
+            vim.schedule(function()
+                if ai_bufs[name] and vim.api.nvim_buf_is_valid(ai_bufs[name]) then
+                    vim.api.nvim_buf_delete(ai_bufs[name], { force = true })
+                end
+                ai_bufs[name] = nil
+                if ai_win then
+                    if vim.api.nvim_win_is_valid(ai_win) then
+                        vim.api.nvim_win_close(ai_win, true)
+                    end
+                    ai_win = nil
+                    zoom_state.is_zoomed = false
+                end
+            end)
+        end,
+    })
+
+    return buf
+end
+
 local function open_ai_terminal()
     local ai = current_ai()
 
@@ -161,39 +196,7 @@ local function open_ai_terminal()
     if buf and vim.api.nvim_buf_is_valid(buf) then
         vim.api.nvim_set_current_buf(buf)
     else
-        -- Start in project root
-        local project_root = get_project_root()
-        vim.cmd('lcd ' .. vim.fn.fnameescape(project_root))
-        vim.cmd('terminal ' .. ai.cmd)
-        buf = vim.api.nvim_get_current_buf()
-        ai_bufs[ai.name] = buf
-        vim.bo[buf].buflisted = false
-
-        -- Clean up and auto-close when terminal exits
-        local name = ai.name
-        vim.api.nvim_create_autocmd('TermClose', {
-            buffer = buf,
-            callback = function()
-                vim.schedule(function()
-                    if ai_bufs[name] and vim.api.nvim_buf_is_valid(ai_bufs[name]) then
-                        vim.api.nvim_buf_delete(ai_bufs[name], { force = true })
-                    end
-                    ai_bufs[name] = nil
-                    -- Clear tracked window when its terminal buffer exits
-                    if ai_win then
-                        if not vim.api.nvim_win_is_valid(ai_win) then
-                            ai_win = nil
-                            zoom_state.is_zoomed = false
-                        else
-                            -- Window is still valid but no longer has a terminal buffer
-                            vim.api.nvim_win_close(ai_win, true)
-                            ai_win = nil
-                            zoom_state.is_zoomed = false
-                        end
-                    end
-                end)
-            end,
-        })
+        spawn_ai_terminal(ai)
     end
 
     ai_win = vim.api.nvim_get_current_win()
@@ -241,29 +244,7 @@ local function cycle_ai_terminal()
         if not buf or not vim.api.nvim_buf_is_valid(buf) then
             -- Need to create the terminal in the existing window
             vim.api.nvim_set_current_win(ai_win)
-            local project_root = get_project_root()
-            vim.cmd('lcd ' .. vim.fn.fnameescape(project_root))
-            vim.cmd('terminal ' .. ai.cmd)
-            buf = vim.api.nvim_get_current_buf()
-            ai_bufs[ai.name] = buf
-            vim.bo[buf].buflisted = false
-
-            local name = ai.name
-            vim.api.nvim_create_autocmd('TermClose', {
-                buffer = buf,
-                callback = function()
-                    vim.schedule(function()
-                        if ai_bufs[name] and vim.api.nvim_buf_is_valid(ai_bufs[name]) then
-                            vim.api.nvim_buf_delete(ai_bufs[name], { force = true })
-                        end
-                        ai_bufs[name] = nil
-                        if ai_win and not vim.api.nvim_win_is_valid(ai_win) then
-                            ai_win = nil
-                            zoom_state.is_zoomed = false
-                        end
-                    end)
-                end,
-            })
+            spawn_ai_terminal(ai)
         else
             vim.api.nvim_win_set_buf(ai_win, buf)
         end
