@@ -2,19 +2,6 @@
 -- LSP keymaps (buffer-local on attach)
 ---------------------------------------------------------------------
 
--- Filetypes that should use Conform (Prettier) instead of LSP formatting
-local webby_filetypes = {
-    javascript = true,
-    javascriptreact = true,
-    typescript = true,
-    typescriptreact = true,
-    json = true,
-    css = true,
-    scss = true,
-    markdown = true,
-    yaml = true,
-}
-
 -- Global diagnostic configuration
 vim.diagnostic.config({
     virtual_text = { prefix = "●", spacing = 2 },
@@ -92,23 +79,21 @@ vim.api.nvim_create_autocmd('LspAttach', {
             })
         end
 
-        -- Format: prefer Conform for web-ish filetypes, fallback to LSP
+        -- Format: Conform uses Prettier for the filetypes it has configured and
+        -- falls back to the LSP for everything else, so the filetype list that
+        -- used to live here is redundant with formatters_by_ft.
         bufmap('n', '<leader>lf', function()
             local ok, conform = pcall(require, 'conform')
-            if ok and webby_filetypes[vim.bo.filetype] then
-                return conform.format({ async = true, lsp_fallback = true })
+            if ok then
+                return conform.format({ async = true, lsp_format = 'fallback' })
             end
             vim.lsp.buf.format({ async = true })
         end, 'Format buffer')
     end,
 })
 
-local cmp_caps = require('blink.cmp').get_lsp_capabilities()
-if vim.lsp and vim.lsp.config then
-    vim.lsp.config('*', {
-        capabilities = cmp_caps,
-    })
-end
+-- blink.cmp registers its own capabilities on vim.lsp.config('*') from its
+-- plugin/ file, so there is nothing to wire up here.
 
 local function on_attach_disable_ts_formatting(client, bufnr)
     client.server_capabilities.documentFormattingProvider = false

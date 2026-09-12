@@ -15,7 +15,6 @@ Personal dotfiles repository for macOS development environment. Manages configur
   - `lua/keymap.lua` - All keybindings organized by category
   - `lua/ai_terminal.lua` - Terminal management for Claude Code integration
   - `lua/options.lua` - Editor settings
-  - `lsp/` - Server-specific LSP configurations
 - `karabiner/` - Keyboard customization for macOS
 - `.zshrc` - Shell configuration with AI-powered git commit (`gcm`)
 - `.tmux.conf` - Tmux with vim keybindings, prefix: `C-space`
@@ -27,10 +26,10 @@ Personal dotfiles repository for macOS development environment. Manages configur
 
 **Key Subsystems:**
 - LSP: Mason manages server installation; lspconfig handles setup
-- Completion: nvim-cmp with LuaSnip snippets
-- Formatting: Conform.nvim (Prettier for web filetypes only)
+- Completion: blink.cmp with friendly-snippets
+- Formatting: Conform.nvim (Prettier for web filetypes, LSP fallback otherwise)
 - Fuzzy Finding: fzf-lua for all search operations
-- AI: GitHub Copilot suggestions (C-l to accept, C-n/C-p to cycle)
+- AI: GitHub Copilot suggestions (C-l accept, M-n/M-p cycle, C-] dismiss)
 
 **Leader Key:** Space
 

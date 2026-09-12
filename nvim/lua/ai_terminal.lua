@@ -92,13 +92,11 @@ local config = {
 -- Utilities
 -------------------------------------------------------------------------------
 
--- Find git root directory, fallback to cwd
+-- Find git root directory, fallback to cwd.
+-- vim.fs.root walks the tree in-process; the old `git rev-parse` shelled out
+-- synchronously on every terminal open.
 local function get_project_root()
-    local git_root = vim.fn.systemlist('git rev-parse --show-toplevel 2>/dev/null')[1]
-    if vim.v.shell_error == 0 and git_root and git_root ~= '' then
-        return git_root
-    end
-    return vim.fn.getcwd()
+    return vim.fs.root(0, '.git') or vim.fn.getcwd()
 end
 
 -- Get visual selection text

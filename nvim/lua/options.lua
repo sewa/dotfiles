@@ -1,9 +1,8 @@
 local opt = vim.opt
 
 -- Files
-opt.swapfile  = true
-opt.directory = vim.fn.stdpath('state') .. '/swap//'
-opt.undofile  = true
+opt.swapfile = true
+opt.undofile = true
 
 -- Search
 opt.hlsearch   = false
@@ -21,12 +20,11 @@ opt.history       = 500
 opt.timeoutlen    = 500
 opt.updatetime    = 250
 opt.clipboard     = 'unnamedplus'
-opt.completeopt   = 'menuone,noinsert,noselect'
 opt.splitbelow    = true
 opt.splitright    = true
 opt.termguicolors = true
 opt.background    = 'dark'
-opt.wildmode      = 'longest'
+opt.wildmode      = 'longest:full,full'
 opt.confirm       = true
 opt.virtualedit   = 'block'
 opt.smoothscroll  = true

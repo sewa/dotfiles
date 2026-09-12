@@ -13,12 +13,13 @@ require('lazy').setup({
             },
         },
     },
-    'tpope/vim-surround',
-    'tpope/vim-unimpaired',
-    'tpope/vim-repeat',
+    { 'tpope/vim-surround',   event = 'VeryLazy' },
+    { 'tpope/vim-unimpaired', event = 'VeryLazy' },
+    { 'tpope/vim-repeat',     event = 'VeryLazy' },
     {
         "stevearc/conform.nvim",
-        event = { "BufReadPre", "BufNewFile" },
+        lazy = true, -- loaded on require by the <leader>lf format keymap
+        cmd = "ConformInfo",
         config = function()
             require("conform").setup({
                 formatters_by_ft = {
@@ -32,7 +33,6 @@ require('lazy').setup({
                     markdown = { "prettierd", "prettier" },
                     yaml = { "prettierd", "prettier" },
                 },
-                -- don’t fall back to LSP; we want Prettier only
                 format_on_save = false,
             })
         end,
@@ -88,6 +88,7 @@ require('lazy').setup({
 
     {
         'vim-test/vim-test',
+        cmd = { 'TestSuite', 'TestFile', 'TestNearest', 'TestLast', 'TestVisit' },
         config = function()
             vim.cmd [[let test#strategy = "neovim"]]
             vim.cmd [[let test#neovim#term_position = "botright 15"]]
@@ -107,6 +108,7 @@ require('lazy').setup({
 
     {
         'folke/trouble.nvim',
+        cmd = 'Trouble',
         config = function()
             require 'trouble'.setup {}
         end
@@ -114,6 +116,7 @@ require('lazy').setup({
 
     {
         'folke/which-key.nvim',
+        event = 'VeryLazy',
         config = function()
             require 'which-key'.setup {}
         end
@@ -121,6 +124,7 @@ require('lazy').setup({
 
     {
         'nvim-tree/nvim-tree.lua',
+        cmd = { 'NvimTreeToggle', 'NvimTreeFindFile', 'NvimTreeRefresh', 'NvimTreeOpen', 'NvimTreeClose' },
         config = function()
             require('nvim-tree').setup({
                 view = {
@@ -133,6 +137,7 @@ require('lazy').setup({
 
     {
         'lewis6991/gitsigns.nvim',
+        event = { 'BufReadPre', 'BufNewFile' },
         config = function()
             require('gitsigns').setup()
         end
@@ -140,7 +145,6 @@ require('lazy').setup({
 
     {
         "axkirillov/unified.nvim",
-        event = "VeryLazy",
         opts = {
             -- you can add options here if needed
             -- e.g. always_fold = true,
@@ -232,6 +236,7 @@ require('lazy').setup({
 
     {
         'nvim-lualine/lualine.nvim',
+        event = 'VeryLazy',
         config = function()
             require 'lualine'.setup({
                 options = {
@@ -244,7 +249,7 @@ require('lazy').setup({
     {
         "elixir-tools/elixir-tools.nvim",
         version = "*",
-        event = { "BufReadPre", "BufNewFile" },
+        ft = { "elixir", "eelixir", "heex", "surface" },
         config = function()
             local elixir = require("elixir")
             local elixirls = require("elixir.elixirls")
@@ -281,7 +286,6 @@ require('lazy').setup({
         lazy = false,
         dependencies = {
             { 'nvim-treesitter/nvim-treesitter-textobjects', branch = 'main' },
-            'nvim-treesitter/nvim-treesitter-context',
         },
         build = ':TSUpdate',
         config = function()
@@ -310,15 +314,22 @@ require('lazy').setup({
             end
             vim.keymap.set('n', '<leader>a', function()
                 require('nvim-treesitter-textobjects.swap').swap_next('@parameter.inner')
-            end)
+            end, { desc = 'Swap parameter next' })
             vim.keymap.set('n', '<leader>A', function()
                 require('nvim-treesitter-textobjects.swap').swap_previous('@parameter.inner')
-            end)
+            end, { desc = 'Swap parameter previous' })
         end
     },
 
     {
+        'nvim-treesitter/nvim-treesitter-context',
+        event = { 'BufReadPost', 'BufNewFile' },
+    },
+
+    {
         'saghen/blink.cmp',
+        -- Stays eager: its plugin/ file registers LSP capabilities on
+        -- vim.lsp.config('*') and must run before any server starts.
         version = '1.*',
         dependencies = { 'rafamadriz/friendly-snippets' },
         ---@module 'blink.cmp'

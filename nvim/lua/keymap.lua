@@ -1,15 +1,17 @@
-local helpers = require("keymap_helpers")
-
 local function opts(desc)
     return { noremap = true, silent = true, desc = desc }
 end
 
-vim.keymap.set('n', '<Space>', '', opts('Leader'))
+local function toggle_diagnostics()
+    local enabled = vim.diagnostic.is_enabled()
+    vim.diagnostic.enable(not enabled)
+    vim.notify("Diagnostics " .. (enabled and "disabled" or "enabled"))
+end
 
 -- Editor Keymaps
 vim.keymap.set('n', '<leader>qq', '<cmd>qa<cr>', opts('Quit all'))
 vim.keymap.set('n', '<leader>eq', '<cmd>qa!<cr>', opts('Force quit all'))
-vim.keymap.set('n', '<leader>ed', helpers.toggle_diagnostics, opts('Toggle diagnostics'))
+vim.keymap.set('n', '<leader>ed', toggle_diagnostics, opts('Toggle diagnostics'))
 
 -- Tree Keymaps
 vim.keymap.set('n', '<leader>pt', '<cmd>NvimTreeToggle<cr>', opts('Toggle file tree'))

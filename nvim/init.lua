@@ -31,16 +31,17 @@ require'options'
 require'keymap'
 require'ai_terminal'
 
-vim.cmd.filetype('plugin on')
-vim.cmd.filetype('indent on')
-
--- Strip trailing whitespace on save
+-- Strip trailing whitespace on save. `keeppatterns` avoids clobbering the last
+-- search pattern and winsaveview restores the scroll position, not just the
+-- cursor. Markdown is skipped: trailing double-space is a hard line break.
 vim.api.nvim_create_autocmd('BufWritePre', {
-    pattern = '*',
-    callback = function()
-        local save_cursor = vim.fn.getpos('.')
-        vim.cmd([[%s/\s\+$//e]])
-        vim.fn.setpos('.', save_cursor)
+    callback = function(args)
+        if vim.bo[args.buf].filetype == 'markdown' then
+            return
+        end
+        local view = vim.fn.winsaveview()
+        vim.cmd([[keeppatterns %s/\s\+$//e]])
+        vim.fn.winrestview(view)
     end,
 })
 
