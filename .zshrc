@@ -174,3 +174,5 @@ export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
 
 # Java
 export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+
+export PATH="/Users/severin/.local/bin:$PATH"
