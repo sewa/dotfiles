@@ -5,11 +5,15 @@
 -- Global diagnostic configuration
 vim.diagnostic.config({
     virtual_text = { prefix = "●", spacing = 2 },
-    signs = true,
-    underline = true,
-    update_in_insert = false,
     severity_sort = true,
-    float = { border = "rounded", source = "if_many" },
+    float = { source = "if_many" },
+    -- Show the float for the diagnostic landed on by [d/]d and <leader>ln/lp
+    jump = {
+        on_jump = function(diagnostic, bufnr)
+            if not diagnostic then return end
+            vim.diagnostic.open_float({ bufnr = bufnr, scope = 'cursor', focus = false })
+        end,
+    },
 })
 
 local lsp_cmds = vim.api.nvim_create_augroup('lsp_cmds', { clear = true })
@@ -46,7 +50,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
         -- Diagnostics
         bufmap('n', '<leader>lo', function()
-            vim.diagnostic.open_float({ border = "rounded", focus = false, source = "if_many" })
+            vim.diagnostic.open_float({ focus = false })
         end, 'Line diagnostics')
         bufmap('n', '<leader>lp', function() vim.diagnostic.jump({ count = -1 }) end, 'Prev diagnostic')
         bufmap('n', '<leader>ln', function() vim.diagnostic.jump({ count = 1 }) end, 'Next diagnostic')
@@ -100,11 +104,16 @@ local function on_attach_disable_ts_formatting(client, bufnr)
     client.server_capabilities.documentRangeFormattingProvider = false
 end
 
-if vim.lsp and vim.lsp.config then
-    vim.lsp.config('ts_ls', {
-        on_attach = on_attach_disable_ts_formatting,
-    })
-end
+vim.lsp.config('ts_ls', {
+    on_attach = on_attach_disable_ts_formatting,
+})
+
+-- ruby-lsp is installed per-Ruby with `gem install ruby-lsp` and picked up via
+-- the asdf shim, not through Mason: a Mason-installed gem binds its native
+-- extensions to whatever Ruby was active at install time and breaks on switch.
+-- It shells out to rubocop for diagnostics and formatting when the project has
+-- it, so <leader>lf's LSP fallback covers Ruby with no Conform entry.
+vim.lsp.enable('ruby_lsp')
 
 require('mason').setup({})
 

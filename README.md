@@ -6,13 +6,12 @@ Personal dotfiles for macOS development. Configuration for Neovim, Zsh, Tmux, Ka
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/dotfiles.git ~/Projects/dotfiles
+git clone git@github.com:sewa/dotfiles.git ~/Projects/dotfiles
 
 # Required dependencies
 brew install fzf fd rg bat delta neovim tmux
 
 # Font (required for icons)
-brew tap homebrew/cask-fonts
 brew install --cask font-sauce-code-pro-nerd-font
 
 # fzf-tab (zsh plugin)
@@ -44,16 +43,14 @@ dotfiles/
 │   │   ├── lsp.lua           # LSP setup with Mason
 │   │   ├── keymap.lua        # All keybindings
 │   │   ├── options.lua       # Editor settings
-│   │   ├── claude.lua        # Terminal management
-│   │   └── keymap_helpers.lua
-│   └── lsp/
-│       └── solargraph.lua    # Ruby LSP config
+│   │   └── ai_terminal.lua   # AI (Claude, Codex) and shell terminals
 ├── karabiner/
 │   └── karabiner.json        # Keyboard customization
 ├── .tmux.conf
 ├── .zshrc
 ├── .gitconfig
-└── .rspec
+├── .rspec
+└── ansible.cfg
 ```
 
 ## Neovim
@@ -66,17 +63,18 @@ dotfiles/
 |----------|--------|---------|
 | Plugin Manager | lazy.nvim | With lockfile |
 | LSP | mason.nvim, nvim-lspconfig | Auto-install and configure LSPs |
-| Completion | nvim-cmp, LuaSnip | Autocomplete with snippets |
+| Completion | blink.cmp, friendly-snippets | Autocomplete with snippets |
 | Formatting | conform.nvim | Prettier for web files |
 | Fuzzy Finding | fzf-lua | Files, grep, buffers, git |
-| AI | copilot.lua | GitHub Copilot |
 | Testing | vim-test | Run tests from editor |
 | Git | gitsigns.nvim, unified.nvim | Signs, blame, inline diff |
 | File Tree | nvim-tree | File explorer |
-| Syntax | nvim-treesitter | Highlighting, text objects |
-| UI | github-nvim-theme, lualine | Dark theme, statusline |
+| Syntax | nvim-treesitter, nvim-treesitter-context | Highlighting, folds, text objects, sticky context |
+| Editing | vim-surround, vim-unimpaired, vim-repeat | Surround, bracket mappings, `.` for plugins |
+| UI | github-nvim-theme, lualine, which-key | Dark theme, statusline, keymap hints |
 | Diagnostics | trouble.nvim | Diagnostics list |
-| Elixir | elixir-tools.nvim | NextLS, Credo, ElixirLS |
+| TypeScript | better-ts-errors.nvim | Readable TypeScript errors |
+| Elixir | elixir-tools.nvim | NextLS, Credo |
 
 ### Keybindings
 
@@ -89,13 +87,30 @@ dotfiles/
 | `lG` | Go to declaration |
 | `li` | Go to implementation |
 | `lt` | Type definition |
+| `lH` | Signature help |
 | `lr` | Rename symbol |
 | `lR` | Find references |
-| `la` | Code action |
+| `lws` | Workspace symbols |
+| `lwl/lwa/lwr` | List/add/remove workspace folder |
+| `la` | Code action (normal and visual) |
 | `lf` | Format buffer |
 | `lI` | Toggle inlay hints |
 | `lo` | Line diagnostics |
-| `ln/lp` | Next/prev diagnostic |
+| `ln/lp` | Next/prev diagnostic (opens its float) |
+| `le/ld` | Toggle TS error / go to definition (better-ts-errors) |
+
+Neovim's built-in LSP maps also work: `grn`, `gra`, `grr`, `gri`, `grt`, `K`, `[d`/`]d`.
+
+#### Completion (Insert Mode)
+
+| Key | Action |
+|-----|--------|
+| `<CR>` | Accept |
+| `<Tab>/<S-Tab>` | Next/prev item, or jump in snippet |
+| `<C-n>/<C-p>` | Open menu / next/prev item (tmux-safe) |
+| `<C-space>` | Open menu / toggle docs (outside tmux) |
+| `<C-e>` | Hide menu |
+| `<C-b>/<C-f>` | Scroll docs |
 
 #### Files & Search (`<leader>f`, `<leader>s`)
 
@@ -103,10 +118,24 @@ dotfiles/
 |-----|--------|
 | `ff` | Find files |
 | `fo` | Recent files |
+| `fl` | Location list |
 | `fs` | Save file |
 | `/` | Live grep |
 | `sw` | Grep word under cursor |
 | `sb` | Search buffer lines |
+| `sl` | Repeat last grep |
+
+#### History & Info (`<leader>h`, `<leader>i`)
+
+| Key | Action |
+|-----|--------|
+| `hc` | Command history |
+| `hs` | Search history |
+| `hr` | Registers |
+| `ih` | Help tags |
+| `ic` | Commands |
+| `ik` | Keymaps |
+| `im` | Man pages |
 
 #### Git (`<leader>g`)
 
@@ -117,8 +146,11 @@ dotfiles/
 | `gc` | Buffer commits |
 | `gb` | Blame line |
 | `gtb` | Toggle blame |
-| `gd` | Diff vs HEAD |
-| `gD` | Diff vs commit |
+| `gtd` | Gitsigns diff this |
+| `gd` | Toggle inline diff vs HEAD (hides nvim-tree) |
+| `gD` | Inline diff vs commit |
+| `gr` | Refresh inline diff |
+| `gF` | Inline diff of file A vs file B |
 
 #### Testing (`<leader>t`)
 
@@ -134,12 +166,14 @@ dotfiles/
 
 | Key | Action |
 |-----|--------|
-| `mc` | Toggle Claude terminal |
-| `mo` | Open Claude terminal |
-| `md` | Close Claude terminal |
-| `mf` | Focus Claude terminal |
-| `mz` | Zoom Claude (fullscreen) |
-| `ms` | Send selection to Claude |
+| `mc` | Toggle AI terminal |
+| `mo` | Open AI terminal |
+| `md` | Close AI terminal |
+| `mf` | Focus AI terminal |
+| `mn` | Cycle AI terminal (Claude ↔ Codex) |
+| `mz` | Zoom AI terminal (fullscreen) |
+| `ms` | Send selection to AI terminal (visual) |
+| `mr` | Send selection to the other AI terminal (visual) |
 | `mt` | Toggle shell terminal |
 
 #### Other
@@ -148,22 +182,18 @@ dotfiles/
 |-----|--------|
 | `pt` | Toggle file tree |
 | `pf` | Find in tree |
+| `pr` | Refresh tree |
 | `cl` | Toggle comment |
-| `xx` | Toggle diagnostics list |
+| `xx` | Toggle Trouble |
+| `xd` | Buffer diagnostics (Trouble) |
+| `xw` | Workspace diagnostics |
+| `ed` | Toggle diagnostics |
 | `bb` | List buffers |
 | `bd` | Delete buffer |
 | `w/` | Split vertical |
 | `wd` | Close window |
 | `qq` | Quit all |
-
-#### Copilot (Insert Mode)
-
-| Key | Action |
-|-----|--------|
-| `<C-l>` | Accept suggestion |
-| `<C-n>` | Next suggestion |
-| `<C-p>` | Previous suggestion |
-| `<C-h>` | Dismiss |
+| `eq` | Force quit all |
 
 #### Treesitter Text Objects
 
@@ -172,7 +202,6 @@ dotfiles/
 | `af/if` | Function outer/inner |
 | `ab/ib` | Block outer/inner |
 | `ac/ic` | Call outer/inner |
-| `grr` | Smart rename |
 | `<leader>a` | Swap next parameter |
 | `<leader>A` | Swap prev parameter |
 
@@ -181,8 +210,9 @@ dotfiles/
 | Key | Action |
 |-----|--------|
 | `<C-h/j/k/l>` | Navigate windows (works in terminal) |
-| `<C-s>` | Enter scroll mode (terminal) |
+| `<C-s>` | Enter/exit scroll mode (terminal) |
 | `i` | Exit scroll mode |
+| `q` | Close terminal window (scroll mode) |
 | `<Esc>` | Pass to terminal app |
 
 ### Editor Settings
@@ -196,20 +226,26 @@ dotfiles/
 - **Clipboard:** System clipboard
 - **Search:** Case-insensitive, smart-case
 - **Swap/Undo:** Enabled with persistent undo
+- **Folds:** Treesitter-based, files open unfolded
+- **Floats:** Rounded borders everywhere (`winborder`)
+- **Messages:** Experimental ui2 with `cmdheight=0` (no "Press ENTER" prompts)
+- **On save:** Trailing whitespace stripped (except Markdown)
 
 ### LSP Servers
 
 - **TypeScript:** ts_ls (auto-installed)
 - **Lua:** lua_ls (auto-installed)
-- **Ruby:** Solargraph (via bundle exec)
-- **Elixir:** NextLS, ElixirLS, Credo
+- **Ruby:** ruby-lsp (`gem install ruby-lsp` per Ruby version via asdf, not Mason)
+- **Elixir:** NextLS and Credo via elixir-tools (ElixirLS available but disabled)
 
 ### Formatting
 
-Web files use Prettier via conform.nvim:
+`<leader>lf` formats with Prettier (prettierd if installed) via conform.nvim for:
 - JavaScript, TypeScript, JSX, TSX
 - JSON, CSS, SCSS
 - Markdown, YAML
+
+Everything else falls back to the language server's formatter.
 
 ## Tmux
 
@@ -242,7 +278,7 @@ Web files use Prettier via conform.nvim:
 
 ### PATH
 
-Includes: Homebrew, PostgreSQL 12, MongoDB, Python 3, asdf, Java 17, Android SDK
+Includes: Homebrew, PostgreSQL 12, MongoDB, Python 3, asdf, Java 17, Android SDK, `~/.local/bin`
 
 ### Functions
 
@@ -330,15 +366,14 @@ Hold `V` + movement key to select text. Excluded from terminals and editors (whe
 
 ### Ruby/Rails
 
-- Solargraph LSP via bundler
+- ruby-lsp, which runs RuboCop for diagnostics and formatting when the project uses it
 - Spring binstub for tests
 - PostgreSQL 12
 
 ### Elixir
 
-- NextLS, ElixirLS, Credo
-- Pipe manipulation: `<leader>lfp` (from), `<leader>ltp` (to)
-- Macro expansion: `<leader>lem`
+- NextLS and Credo
+- With ElixirLS enabled only: pipe manipulation `<leader>lfp` (from) / `<leader>ltp` (to), macro expansion `<leader>lem`
 
 ### JavaScript/TypeScript
 

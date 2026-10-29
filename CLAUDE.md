@@ -29,7 +29,6 @@ Personal dotfiles repository for macOS development environment. Manages configur
 - Completion: blink.cmp with friendly-snippets
 - Formatting: Conform.nvim (Prettier for web filetypes, LSP fallback otherwise)
 - Fuzzy Finding: fzf-lua for all search operations
-- AI: GitHub Copilot suggestions (C-l accept, M-n/M-p cycle, C-] dismiss)
 
 **Leader Key:** Space
 

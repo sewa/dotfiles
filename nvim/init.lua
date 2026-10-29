@@ -34,9 +34,11 @@ require'ai_terminal'
 -- Strip trailing whitespace on save. `keeppatterns` avoids clobbering the last
 -- search pattern and winsaveview restores the scroll position, not just the
 -- cursor. Markdown is skipped: trailing double-space is a hard line break.
+-- Non-modifiable buffers are skipped too, or the substitute raises E21.
 vim.api.nvim_create_autocmd('BufWritePre', {
     callback = function(args)
-        if vim.bo[args.buf].filetype == 'markdown' then
+        local bo = vim.bo[args.buf]
+        if not bo.modifiable or bo.filetype == 'markdown' then
             return
         end
         local view = vim.fn.winsaveview()

@@ -1,6 +1,6 @@
 require('lazy').setup({
-    'williamboman/mason.nvim',
-    'williamboman/mason-lspconfig.nvim',
+    'mason-org/mason.nvim',
+    'mason-org/mason-lspconfig.nvim',
     'neovim/nvim-lspconfig',
     {
         "OlegGulevskyy/better-ts-errors.nvim",
@@ -39,35 +39,6 @@ require('lazy').setup({
     },
 
     {
-        "zbirenbaum/copilot.lua",
-        event = "InsertEnter",
-        opts = {
-            panel = { enabled = false },
-            suggestion = {
-                enabled = true,
-                auto_trigger = true,
-                -- copilot maps these unconditionally with no fallback, so
-                -- <C-h> (backspace), <C-n>/<C-p> (keyword completion) were
-                -- dead in insert mode. Moved off the defaults.
-                keymap = {
-                    accept = "<C-l>",
-                    next = "<M-n>",
-                    prev = "<M-p>",
-                    dismiss = "<C-]>",
-                },
-            },
-            filetypes = {
-                markdown = true,
-                gitcommit = true,
-                help = false,
-            },
-        },
-        config = function(_, opts)
-            require("copilot").setup(opts)
-        end,
-    },
-
-    {
         "ibhagwan/fzf-lua",
         dependencies = { "nvim-tree/nvim-web-devicons" },
         cmd = "FzfLua",
@@ -90,10 +61,10 @@ require('lazy').setup({
         'vim-test/vim-test',
         cmd = { 'TestSuite', 'TestFile', 'TestNearest', 'TestLast', 'TestVisit' },
         config = function()
-            vim.cmd [[let test#strategy = "neovim"]]
-            vim.cmd [[let test#neovim#term_position = "botright 15"]]
-            vim.cmd [[let test#neovim#start_normal = 1]]
-            vim.cmd [[let test#ruby#use_spring_binstub = 1]]
+            vim.g['test#strategy'] = 'neovim'
+            vim.g['test#neovim#term_position'] = 'botright 15'
+            vim.g['test#neovim#start_normal'] = 1
+            vim.g['test#ruby#use_spring_binstub'] = 1
         end
     },
 
@@ -131,7 +102,6 @@ require('lazy').setup({
                     width = 35
                 }
             })
-            vim.g.nvim_tree_disable_window_picker = 1
         end
     },
 
