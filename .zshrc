@@ -27,6 +27,12 @@ export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 # jdk
 export CPPFLAGS="-I/opt/homebrew/opt/openjdk@17/include"
 
+# claude-code
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1
+export DISABLE_TELEMETRY=1
+export DISABLE_ERROR_REPORTING=1
+export DISABLE_FEEDBACK_COMMAND=1
+
 # History
 export HISTFILE=~/.zsh_history
 export HISTSIZE=1000000
